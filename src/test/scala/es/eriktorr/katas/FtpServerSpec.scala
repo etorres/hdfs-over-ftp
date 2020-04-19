@@ -1,5 +1,7 @@
 package es.eriktorr.katas
 
+import es.eriktorr.katas.unitspec.UnitSpec
+
 class FtpServerSpec extends UnitSpec {
   "ftp server" should "list files in home directory" in {
     val ftpServer = FtpServer()

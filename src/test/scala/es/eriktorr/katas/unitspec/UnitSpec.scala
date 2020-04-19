@@ -1,4 +1,4 @@
-package es.eriktorr.katas
+package es.eriktorr.katas.unitspec
 
 import org.scalatest.TryValues
 import org.scalatest.flatspec.AnyFlatSpec
