@@ -1,13 +1,17 @@
 package es.eriktorr.katas
 
 import org.apache.ftpserver.ftplet.{Authentication, User}
-import org.apache.ftpserver.usermanager.SaltedPasswordEncryptor
+import org.apache.ftpserver.usermanager.{
+  AnonymousAuthentication,
+  SaltedPasswordEncryptor,
+  UsernamePasswordAuthentication
+}
 import org.apache.ftpserver.usermanager.impl.AbstractUserManager
 
 class FtpUsers(applicationContext: ApplicationContext)
-    extends AbstractUserManager("root", new SaltedPasswordEncryptor) {
+    extends AbstractUserManager("admin", new SaltedPasswordEncryptor) {
   override def getUserByName(username: String): User =
-    applicationContext.ftpUsers.find(_.name == username).getOrElse(UnauthorizedUser)
+    applicationContext.ftpUsers.find(_.name == username).getOrElse(ForbiddenUser)
 
   override def getAllUserNames: Array[String] =
     applicationContext.ftpUsers.map(_.name).toArray
@@ -19,12 +23,20 @@ class FtpUsers(applicationContext: ApplicationContext)
   override def doesExist(username: String): Boolean =
     applicationContext.ftpUsers.exists(_.name == username)
 
-  override def authenticate(authentication: Authentication): User = ???
-  /*
-  authentication match {
-    case UsernamePasswordAuthentication => null
-    case AnonymousAuthentication => null
-    case _ => null
-  }
- */
+  override def authenticate(authentication: Authentication): User =
+    authentication match {
+      case usernamePasswordAuthentication: UsernamePasswordAuthentication =>
+        val candidateUser = getUserByName(usernamePasswordAuthentication.getUsername)
+        if (candidateUser == ForbiddenUser) ForbiddenUser
+        else {
+          if (getPasswordEncryptor.matches(
+              usernamePasswordAuthentication.getPassword,
+              candidateUser.getPassword
+            )) candidateUser
+          else ForbiddenUser
+        }
+      case _: AnonymousAuthentication =>
+        getUserByName("anonymous")
+      case _ => ForbiddenUser
+    }
 }
