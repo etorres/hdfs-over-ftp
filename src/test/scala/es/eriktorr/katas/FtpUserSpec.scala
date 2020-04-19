@@ -1,12 +1,8 @@
 package es.eriktorr.katas
 
+import es.eriktorr.katas.authorities.{ConcurrentLoginAuthority, TransferRateAuthority}
 import es.eriktorr.katas.matchers.CustomMatchers._
-import org.apache.ftpserver.usermanager.impl.{
-  BaseUser,
-  ConcurrentLoginPermission,
-  TransferRatePermission,
-  WritePermission
-}
+import org.apache.ftpserver.usermanager.impl.{BaseUser, WritePermission}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -21,15 +17,15 @@ class FtpUserSpec extends AnyFlatSpec with Matchers with TableDrivenPropertyChec
         FtpUser("admin", "123", writePermission = true),
         Seq(
           classOf[WritePermission],
-          classOf[ConcurrentLoginPermission],
-          classOf[TransferRatePermission]
+          classOf[ConcurrentLoginAuthority],
+          classOf[TransferRateAuthority]
         )
       ),
       (
         FtpUser("read-only user", "123"),
         Seq(
-          classOf[ConcurrentLoginPermission],
-          classOf[TransferRatePermission]
+          classOf[ConcurrentLoginAuthority],
+          classOf[TransferRateAuthority]
         )
       )
     )
@@ -43,6 +39,14 @@ class FtpUserSpec extends AnyFlatSpec with Matchers with TableDrivenPropertyChec
     val user = new BaseUser()
     user.setName("user")
     user.setPassword("123")
+    user.setAuthorities(
+      Seq(
+        new ConcurrentLoginAuthority(4, 2),
+        new TransferRateAuthority(0, 0)
+      ).asJava
+    )
+    user.setMaxIdleTime(300)
+    user.setHomeDirectory("/home/user")
     FtpUser("user", "123") should haveMatchingAttributesWith(user)
   }
 }

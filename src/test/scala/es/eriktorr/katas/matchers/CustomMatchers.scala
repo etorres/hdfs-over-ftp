@@ -7,7 +7,7 @@ import scala.util.{Failure, Success, Try}
 //import org.apache.ftpserver.usermanager.impl._
 import org.scalatest.matchers.{MatchResult, Matcher}
 
-sealed case class UseCase[T](name: String, left: T, expected: T)
+sealed case class UseCase[T](name: String, a: T, b: T)
 
 trait CustomMatchers {
   class FtpUserIsJavaBeanMatcher(expected: User) extends Matcher[FtpUser] {
@@ -28,10 +28,10 @@ trait CustomMatchers {
         UseCase("maxIdleTime", left.getMaxIdleTime, expected.getMaxIdleTime),
         UseCase("enabled", left.getEnabled, expected.getEnabled),
         UseCase("homeDirectory", left.getHomeDirectory, expected.getHomeDirectory)
-      ).flatMap(useCase =>
-        if (left == expected) None
-        else Some((useCase.name, asString(useCase.left), asString(useCase.expected)))
-      )
+      ).flatMap { useCase =>
+        if (useCase.a == useCase.b) None
+        else Some((useCase.name, asString(useCase.a), asString(useCase.b)))
+      }
 
       /*
       left.getAuthorities(classOf[ConcurrentLoginPermission]) == expected.getAuthorities(
