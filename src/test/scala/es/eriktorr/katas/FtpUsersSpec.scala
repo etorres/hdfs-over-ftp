@@ -1,38 +1,12 @@
 package es.eriktorr.katas
 
 import es.eriktorr.katas.ApplicationContextLoader.loadApplicationContext
-import es.eriktorr.katas.unitspec.UnitSpec
+import es.eriktorr.katas.unitspec.{DataProvider, UnitSpec}
 import org.apache.ftpserver.usermanager.{AnonymousAuthentication, UsernamePasswordAuthentication}
 
-class FtpUsersSpec extends UnitSpec {
+class FtpUsersSpec extends UnitSpec with DataProvider {
   private[this] val applicationContext = loadApplicationContext
   private[this] val ftpUsers = new FtpUsers(applicationContext)
-
-  private[this] val OperatorFtpUser =
-    FtpUser(
-      name = "operator",
-      password = "62370436:28142C8301BFAC1959EAEA30991958AD",
-      maxLoginPerIp = None,
-      maxLoginNumber = None,
-      maxIdleTime = None,
-      maxDownloadRate = None,
-      maxUploadRate = None,
-      writePermission = None,
-      enabled = None
-    )
-
-  private[this] val AnonymousFtpUser =
-    FtpUser(
-      name = "anonymous",
-      password = "",
-      maxLoginPerIp = Some(1),
-      maxLoginNumber = None,
-      maxIdleTime = None,
-      maxDownloadRate = None,
-      maxUploadRate = None,
-      writePermission = None,
-      enabled = Some(false)
-    )
 
   "ftp users" should "find a user by her name" in {
     ftpUsers.getUserByName("operator") shouldBe OperatorFtpUser

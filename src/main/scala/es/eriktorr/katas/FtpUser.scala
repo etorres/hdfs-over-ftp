@@ -11,7 +11,7 @@ import org.apache.ftpserver.ftplet.{Authority, AuthorizationRequest, User}
 
 import scala.jdk.CollectionConverters._
 
-case class FtpUser(
+sealed case class FtpUser(
   name: String,
   password: String,
   maxLoginPerIp: Option[Int],
@@ -22,9 +22,6 @@ case class FtpUser(
   writePermission: Option[Boolean],
   enabled: Option[Boolean]
 ) extends User {
-  val MaxIdleTimeDefault: Int = 300
-  val EnabledDefault: Boolean = true
-
   private[this] val authorizationMakers =
     List(WriteAuthorizationMaker, LoginAuthorizationMaker, TransferRateAuthorizationMaker)
 
@@ -47,9 +44,14 @@ case class FtpUser(
       .flatMap(authority => Option(authority.authorize(request)))
       .orNull
 
-  override def getMaxIdleTime: Int = maxIdleTime.getOrElse(MaxIdleTimeDefault)
+  override def getMaxIdleTime: Int = maxIdleTime.getOrElse(FtpUser.MaxIdleTimeDefault)
 
-  override def getEnabled: Boolean = enabled.getOrElse(EnabledDefault)
+  override def getEnabled: Boolean = enabled.getOrElse(FtpUser.EnabledDefault)
 
   override def getHomeDirectory: String = s"/home/$name"
+}
+
+object FtpUser {
+  val MaxIdleTimeDefault: Int = 300
+  val EnabledDefault: Boolean = true
 }
