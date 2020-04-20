@@ -3,22 +3,25 @@ package es.eriktorr.katas.filesystem
 import java.io.{InputStream, OutputStream}
 import java.util
 
-import org.apache.ftpserver.ftplet.FtpFile
+import es.eriktorr.katas.hdfsclient.HdfsClient
+import org.apache.ftpserver.ftplet.{FtpFile, User}
 
-case class HdfsFtpFile() extends FtpFile {
+import scala.jdk.CollectionConverters._
+
+case class HdfsFtpFile(hdfsClient: HdfsClient, fileName: String, user: User) extends FtpFile {
   override def getAbsolutePath: String = ???
 
   override def getName: String = ???
 
-  override def isHidden: Boolean = ???
+  override def isHidden: Boolean = false
 
-  override def isDirectory: Boolean = ???
+  override def isDirectory: Boolean = hdfsClient.isDirectory(fileName)
 
-  override def isFile: Boolean = ???
+  override def isFile: Boolean = hdfsClient.isFile(fileName)
 
-  override def doesExist(): Boolean = ???
+  override def doesExist(): Boolean = hdfsClient.doesExist(fileName)
 
-  override def isReadable: Boolean = ???
+  override def isReadable: Boolean = true
 
   override def isWritable: Boolean = ???
 
@@ -44,7 +47,8 @@ case class HdfsFtpFile() extends FtpFile {
 
   override def move(destination: FtpFile): Boolean = ???
 
-  override def listFiles(): util.List[_ <: FtpFile] = ???
+  override def listFiles(): util.List[_ <: FtpFile] =
+    hdfsClient.listFiles(fileName).map(f => HdfsFtpFile(hdfsClient, f, user)).asJava
 
   override def createOutputStream(offset: Long): OutputStream = ???
 
