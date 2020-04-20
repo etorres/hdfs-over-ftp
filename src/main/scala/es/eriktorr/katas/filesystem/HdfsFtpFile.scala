@@ -21,15 +21,15 @@ case class HdfsFtpFile(hdfsClient: HdfsClient, fileName: String, user: User) ext
 
   override def doesExist(): Boolean = hdfsClient.doesExist(fileName)
 
-  override def isReadable: Boolean = true
+  override def isReadable: Boolean = hdfsClient.isReadable(fileName, user)
 
-  override def isWritable: Boolean = ???
+  override def isWritable: Boolean = hdfsClient.isWritable(fileName, user)
 
   override def isRemovable: Boolean = ???
 
-  override def getOwnerName: String = ???
+  override def getOwnerName: String = hdfsClient.getOwnerName(fileName)
 
-  override def getGroupName: String = ???
+  override def getGroupName: String = hdfsClient.getGroupName(fileName)
 
   override def getLinkCount: Int = ???
 

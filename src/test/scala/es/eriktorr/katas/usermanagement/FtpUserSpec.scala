@@ -20,6 +20,7 @@ class FtpUserSpec extends AnyFlatSpec with Matchers with TableDrivenPropertyChec
     FtpUser(
       name = name,
       password = Password,
+      groups = Seq.empty,
       maxLoginPerIp = None,
       maxLoginNumber = None,
       maxIdleTime = None,

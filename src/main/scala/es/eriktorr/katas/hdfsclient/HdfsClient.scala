@@ -4,6 +4,8 @@ import java.net.URI
 
 import com.typesafe.scalalogging.LazyLogging
 import es.eriktorr.katas.ApplicationContext
+import es.eriktorr.katas.hdfsclient.permissions.{FileAttributes, GroupRead, OtherRead, UserRead}
+import org.apache.ftpserver.ftplet.User
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.hdfs.DistributedFileSystem
@@ -15,6 +17,10 @@ trait HdfsClient {
   def isDirectory(path: String): Boolean
   def isFile(path: String): Boolean
   def listFiles(path: String): Seq[String]
+  def getOwnerName(path: String): String
+  def getGroupName(path: String): String
+  def isReadable(path: String, user: User): Boolean
+  def isWritable(path: String, user: User): Boolean
 }
 
 object HdfsClient extends LazyLogging {
@@ -48,6 +54,38 @@ object HdfsClient extends LazyLogging {
         case Failure(exception) =>
           warn(message = "listStatus failed", exception = exception, response = Seq.empty)
       }
+
+    override def getOwnerName(path: String): String = fileStatus(path) match {
+      case Success(fileStatus) => fileStatus.getOwner
+      case Failure(exception) =>
+        warn(message = "getOwnerName failed", exception = exception, response = "")
+    }
+
+    override def getGroupName(path: String): String = fileStatus(path) match {
+      case Success(fileStatus) => fileStatus.getGroup
+      case Failure(exception) =>
+        warn(message = "getGroupName failed", exception = exception, response = "")
+    }
+
+    override def isReadable(path: String, user: User): Boolean = fileStatus(path) match {
+      case Success(fileStatus) => {
+        val fileAttributes = FileAttributes(
+          owner = fileStatus.getOwner,
+          group = fileStatus.getGroup,
+          permissions = fileStatus.getPermission.toString
+        )
+        readValidators.find(_.matches(fileAttributes, user)) match {
+          case Some(_) => true
+          case None => false
+        }
+      }
+      case Failure(exception) =>
+        warn(message = "isReadable failed", exception = exception, response = false)
+    }
+
+    override def isWritable(path: String, user: User): Boolean = ???
+
+    private[this] lazy val readValidators = Seq(UserRead, GroupRead, OtherRead)
 
     private[this] def fileStatus(path: String) =
       Try {

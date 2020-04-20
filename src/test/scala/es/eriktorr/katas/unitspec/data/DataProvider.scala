@@ -9,10 +9,17 @@ import es.eriktorr.katas.usermanagement.authorization.WriteAuthorizationMaker.Wr
 import es.eriktorr.katas.usermanagement.FtpUser
 
 trait DataProvider {
-  def aFtpUser(name: String, password: String, maxLoginPerIp: Int, enabled: Boolean): FtpUser =
+  def aFtpUser(
+    name: String,
+    password: String,
+    groups: Seq[String],
+    maxLoginPerIp: Int,
+    enabled: Boolean
+  ): FtpUser =
     FtpUser(
       name = name,
       password = password,
+      groups = groups,
       maxLoginPerIp = Some(maxLoginPerIp),
       maxLoginNumber = Some(MaxLoginNumberDefault),
       maxIdleTime = Some(MaxIdleTimeDefault),
@@ -25,6 +32,7 @@ trait DataProvider {
   val OperatorFtpUser: FtpUser = aFtpUser(
     name = "operator",
     password = "62370436:28142C8301BFAC1959EAEA30991958AD",
+    groups = Seq("supergroup"),
     maxLoginPerIp = MaxLoginPerIpDefault,
     enabled = EnabledDefault
   )
@@ -32,6 +40,7 @@ trait DataProvider {
   val AnonymousFtpUser: FtpUser = aFtpUser(
     name = "anonymous",
     password = "",
+    groups = Seq.empty,
     maxLoginPerIp = 1,
     enabled = false
   )

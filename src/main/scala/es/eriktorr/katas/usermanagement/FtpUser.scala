@@ -14,6 +14,7 @@ import scala.jdk.CollectionConverters._
 sealed case class FtpUser(
   name: String,
   password: String,
+  groups: Seq[String],
   maxLoginPerIp: Option[Int],
   maxLoginNumber: Option[Int],
   maxIdleTime: Option[Int],
