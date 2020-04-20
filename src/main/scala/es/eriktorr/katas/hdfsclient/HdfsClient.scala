@@ -4,7 +4,12 @@ import java.net.URI
 
 import com.typesafe.scalalogging.LazyLogging
 import es.eriktorr.katas.ApplicationContext
-import es.eriktorr.katas.hdfsclient.permissions.{FileAttributes, GroupRead, OtherRead, UserRead}
+import es.eriktorr.katas.hdfsclient.permissions.{
+  FileAttributes,
+  GroupPermission,
+  OtherPermission,
+  UserPermission
+}
 import org.apache.ftpserver.ftplet.User
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.Path
@@ -68,24 +73,36 @@ object HdfsClient extends LazyLogging {
     }
 
     override def isReadable(path: String, user: User): Boolean = fileStatus(path) match {
-      case Success(fileStatus) => {
+      case Success(fileStatus) =>
         val fileAttributes = FileAttributes(
           owner = fileStatus.getOwner,
           group = fileStatus.getGroup,
           permissions = fileStatus.getPermission.toString
         )
-        readValidators.find(_.matches(fileAttributes, user)) match {
+        readValidators.find(_.canRead(fileAttributes, user)) match {
           case Some(_) => true
           case None => false
         }
-      }
       case Failure(exception) =>
         warn(message = "isReadable failed", exception = exception, response = false)
     }
 
-    override def isWritable(path: String, user: User): Boolean = ???
+    override def isWritable(path: String, user: User): Boolean = fileStatus(path) match {
+      case Success(fileStatus) =>
+        val fileAttributes = FileAttributes(
+          owner = fileStatus.getOwner,
+          group = fileStatus.getGroup,
+          permissions = fileStatus.getPermission.toString
+        )
+        readValidators.find(_.canWrite(fileAttributes, user)) match {
+          case Some(_) => true
+          case None => false
+        }
+      case Failure(exception) =>
+        warn(message = "isWritable failed", exception = exception, response = false)
+    }
 
-    private[this] lazy val readValidators = Seq(UserRead, GroupRead, OtherRead)
+    private[this] lazy val readValidators = Seq(UserPermission, GroupPermission, OtherPermission)
 
     private[this] def fileStatus(path: String) =
       Try {
