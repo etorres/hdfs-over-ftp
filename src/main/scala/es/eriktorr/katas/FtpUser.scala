@@ -11,18 +11,20 @@ import org.apache.ftpserver.ftplet.{Authority, AuthorizationRequest, User}
 
 import scala.jdk.CollectionConverters._
 
-@SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
-final case class FtpUser(
+case class FtpUser(
   name: String,
   password: String,
-  maxLoginPerIp: Int = 2,
-  maxLoginNumber: Int = 4,
-  maxIdleTime: Int = 300,
-  maxDownloadRate: Int = 0,
-  maxUploadRate: Int = 0,
-  writePermission: Boolean = false,
-  enabled: Boolean = true
+  maxLoginPerIp: Option[Int],
+  maxLoginNumber: Option[Int],
+  maxIdleTime: Option[Int],
+  maxDownloadRate: Option[Int],
+  maxUploadRate: Option[Int],
+  writePermission: Option[Boolean],
+  enabled: Option[Boolean]
 ) extends User {
+  val MaxIdleTimeDefault: Int = 300
+  val EnabledDefault: Boolean = true
+
   private[this] val authorizationMakers =
     List(WriteAuthorizationMaker, LoginAuthorizationMaker, TransferRateAuthorizationMaker)
 
@@ -45,9 +47,9 @@ final case class FtpUser(
       .flatMap(authority => Option(authority.authorize(request)))
       .orNull
 
-  override def getMaxIdleTime: Int = maxIdleTime
+  override def getMaxIdleTime: Int = maxIdleTime.getOrElse(MaxIdleTimeDefault)
 
-  override def getEnabled: Boolean = enabled
+  override def getEnabled: Boolean = enabled.getOrElse(EnabledDefault)
 
   override def getHomeDirectory: String = s"/home/$name"
 }

@@ -8,20 +8,34 @@ class FtpUsersSpec extends UnitSpec {
   private[this] val applicationContext = loadApplicationContext
   private[this] val ftpUsers = new FtpUsers(applicationContext)
 
-  private[this] val operatorFtpUser: FtpUser = FtpUser(
-    name = "operator",
-    password = "62370436:28142C8301BFAC1959EAEA30991958AD"
-  )
+  private[this] val OperatorFtpUser =
+    FtpUser(
+      name = "operator",
+      password = "62370436:28142C8301BFAC1959EAEA30991958AD",
+      maxLoginPerIp = None,
+      maxLoginNumber = None,
+      maxIdleTime = None,
+      maxDownloadRate = None,
+      maxUploadRate = None,
+      writePermission = None,
+      enabled = None
+    )
 
-  private[this] val anonymousFtpUser: FtpUser = FtpUser(
-    name = "anonymous",
-    password = "",
-    maxLoginPerIp = 1,
-    enabled = false
-  )
+  private[this] val AnonymousFtpUser =
+    FtpUser(
+      name = "anonymous",
+      password = "",
+      maxLoginPerIp = Some(1),
+      maxLoginNumber = None,
+      maxIdleTime = None,
+      maxDownloadRate = None,
+      maxUploadRate = None,
+      writePermission = None,
+      enabled = Some(false)
+    )
 
   "ftp users" should "find a user by her name" in {
-    ftpUsers.getUserByName("operator") shouldBe operatorFtpUser
+    ftpUsers.getUserByName("operator") shouldBe OperatorFtpUser
   }
 
   "ftp users" should "list all usernames" in {
@@ -37,11 +51,12 @@ class FtpUsersSpec extends UnitSpec {
   }
 
   "ftp users" should "authenticate a user by its username and password" in {
-    ftpUsers.authenticate(new UsernamePasswordAuthentication("operator", "s3C4e7")) shouldBe operatorFtpUser
+    ftpUsers.authenticate(new UsernamePasswordAuthentication("operator", "s3C4e7")) shouldBe
+      OperatorFtpUser
   }
 
   "ftp users" should "authenticate an anonymous access" in {
-    ftpUsers.authenticate(new AnonymousAuthentication()) shouldBe anonymousFtpUser
+    ftpUsers.authenticate(new AnonymousAuthentication()) shouldBe AnonymousFtpUser
   }
 
   "ftp users" should "reject invalid username and password" in {

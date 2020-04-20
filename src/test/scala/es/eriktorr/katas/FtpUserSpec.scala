@@ -1,5 +1,6 @@
 package es.eriktorr.katas
 
+import es.eriktorr.katas.authorities.WriteAuthorizationMaker.WritePermissionDefault
 import es.eriktorr.katas.authorities.{ConcurrentLoginAuthority, TransferRateAuthority}
 import es.eriktorr.katas.matchers.CustomMatchers._
 import org.apache.ftpserver.usermanager.impl.{BaseUser, WritePermission}
@@ -10,11 +11,26 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import scala.jdk.CollectionConverters._
 
 class FtpUserSpec extends AnyFlatSpec with Matchers with TableDrivenPropertyChecks {
+  private[this] val Password = "123"
+
+  private[this] def aFtpUser(name: String, writePermission: Boolean) =
+    FtpUser(
+      name = name,
+      password = Password,
+      maxLoginPerIp = None,
+      maxLoginNumber = None,
+      maxIdleTime = None,
+      maxDownloadRate = None,
+      maxUploadRate = None,
+      writePermission = Some(writePermission),
+      enabled = None
+    )
+
   "users" should "have least authority" in {
     val users = Table(
       ("user", "authorities"),
       (
-        FtpUser("admin", "123", writePermission = true),
+        aFtpUser(name = "admin", writePermission = true),
         Seq(
           classOf[WritePermission],
           classOf[ConcurrentLoginAuthority],
@@ -22,7 +38,7 @@ class FtpUserSpec extends AnyFlatSpec with Matchers with TableDrivenPropertyChec
         )
       ),
       (
-        FtpUser("read-only user", "123"),
+        aFtpUser(name = "read-only user", writePermission = WritePermissionDefault),
         Seq(
           classOf[ConcurrentLoginAuthority],
           classOf[TransferRateAuthority]
@@ -38,7 +54,7 @@ class FtpUserSpec extends AnyFlatSpec with Matchers with TableDrivenPropertyChec
   "user" should "provide access to attributes via getter methods" in {
     val user = new BaseUser()
     user.setName("user")
-    user.setPassword("123")
+    user.setPassword(Password)
     user.setAuthorities(
       Seq(
         new ConcurrentLoginAuthority(4, 2),
@@ -47,6 +63,7 @@ class FtpUserSpec extends AnyFlatSpec with Matchers with TableDrivenPropertyChec
     )
     user.setMaxIdleTime(300)
     user.setHomeDirectory("/home/user")
-    FtpUser("user", "123") should haveMatchingAttributesWith(user)
+    aFtpUser(name = "user", writePermission = WritePermissionDefault) should
+      haveMatchingAttributesWith(user)
   }
 }
