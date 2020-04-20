@@ -1,10 +1,7 @@
 package es.eriktorr.katas
 
-import java.io.File
-
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory
 import org.apache.ftpserver.listener.ListenerFactory
-import org.apache.ftpserver.usermanager.{PropertiesUserManagerFactory, SaltedPasswordEncryptor}
 import org.apache.ftpserver.{
   ConnectionConfigFactory,
   DataConnectionConfigurationFactory,
@@ -27,31 +24,31 @@ object FtpServer {
       ftpServer.stop()
   }
 
-  def apply(): FtpServer =
-    new UnsafeFtpServer(unsafeFtpServer)
+  def apply(context: ApplicationContext): FtpServer =
+    new UnsafeFtpServer(unsafeFtpServer(context))
 
-  private[this] def unsafeFtpServer: org.apache.ftpserver.FtpServer = {
+  private[this] def unsafeFtpServer(context: ApplicationContext): org.apache.ftpserver.FtpServer = {
+    val ftpServerConfig = context.ftpServerConfig
+
     val dataConnectionConfigurationFactory = new DataConnectionConfigurationFactory
-    dataConnectionConfigurationFactory.setPassivePorts("2222-2224")
+    dataConnectionConfigurationFactory.setPassivePorts(ftpServerConfig.dataPorts)
 
     val listenerFactory = new ListenerFactory
     listenerFactory.setDataConnectionConfiguration(
       dataConnectionConfigurationFactory.createDataConnectionConfiguration()
     )
-    listenerFactory.setPort(2221)
+    ftpServerConfig.hostname match {
+      case Some(hostname) => listenerFactory.setServerAddress(hostname)
+      case _ =>
+    }
+    listenerFactory.setPort(ftpServerConfig.port)
 
     val connectionConfigFactory = new ConnectionConfigFactory
-    connectionConfigFactory.setAnonymousLoginEnabled(true)
-
-    val userManagerFactory = new PropertiesUserManagerFactory
-    userManagerFactory.setPasswordEncryptor(new SaltedPasswordEncryptor)
-    userManagerFactory.setFile(new File(pathTo("users.properties")))
-
-    val fileSystemFactory = new NativeFileSystemFactory
+    connectionConfigFactory.setAnonymousLoginEnabled(ftpServerConfig.enableAnonymous)
 
     val ftpServerFactory = new FtpServerFactory
-    ftpServerFactory.setUserManager(userManagerFactory.createUserManager())
-    ftpServerFactory.setFileSystem(fileSystemFactory)
+    ftpServerFactory.setUserManager(new FtpUsers(context.ftpUsers))
+    ftpServerFactory.setFileSystem(new NativeFileSystemFactory)
     ftpServerFactory.setListeners(Map("default" -> listenerFactory.createListener()).asJava)
     ftpServerFactory.setConnectionConfig(connectionConfigFactory.createConnectionConfig())
 

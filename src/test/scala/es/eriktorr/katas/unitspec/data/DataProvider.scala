@@ -1,4 +1,4 @@
-package es.eriktorr.katas.unitspec
+package es.eriktorr.katas.unitspec.data
 
 import es.eriktorr.katas.FtpUser
 import es.eriktorr.katas.FtpUser.{EnabledDefault, MaxIdleTimeDefault}

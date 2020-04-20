@@ -1,4 +1,4 @@
-package es.eriktorr.katas
+package es.eriktorr.katas.unitspec.clients
 
 import java.io.IOException
 

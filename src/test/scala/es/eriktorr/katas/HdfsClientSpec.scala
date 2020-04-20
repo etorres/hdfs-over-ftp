@@ -11,8 +11,10 @@ import org.apache.hadoop.hdfs.client.HdfsUtils
 class HdfsClientSpec extends UnitSpec {
   "test" should "work" in {
 
+    // TODO
     val kk = HdfsUtils.isHealthy(new URI("hdfs://localhost:9000/user/root/hdfs-site.xml"))
     println(kk)
+    // TODO
 
     val configuration = new Configuration()
     configuration.set("fs.defaultFS", "hdfs://localhost:9000")

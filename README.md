@@ -1,10 +1,6 @@
 # HDFS over FTP
 
-__Project description__
-
-/usr/local/hadoop/bin/hadoop fs -cat hdfs://localhost:8030/user/root/hdfs-site.xml
-
-/usr/local/hadoop/bin/hdfs getconf -confKey fs.defaultFS
+This is rewrite of the project [hdfs-over-ftp](https://github.com/iponweb/hdfs-over-ftp). I found in this project an opportunity to gain experience and developing my skills in Java-to-Scala migration. However, I reduced the scope excluding some advanced features like modifying user accounts (add, delete FTP users), also only non-SSL is supported.
 
 ## Configuring your environment
 
@@ -28,6 +24,14 @@ You can find out all the ports mapped with the docker port command (you can find
 ```
 
 You can make sure all the daemons are up and running by executing the command `jps` in the console of the container.
+
+Useful commands:
+
+```shell script
+/usr/local/hadoop/bin/hadoop fs -cat hdfs://localhost:8030/user/root/hdfs-site.xml
+
+/usr/local/hadoop/bin/hdfs getconf -confKey fs.defaultFS
+```
 
 ## Build and test this project with specific Java version
 

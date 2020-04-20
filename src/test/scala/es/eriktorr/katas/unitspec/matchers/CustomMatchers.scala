@@ -1,4 +1,4 @@
-package es.eriktorr.katas.matchers
+package es.eriktorr.katas.unitspec.matchers
 
 import es.eriktorr.katas.FtpUser
 import org.apache.ftpserver.ftplet.User

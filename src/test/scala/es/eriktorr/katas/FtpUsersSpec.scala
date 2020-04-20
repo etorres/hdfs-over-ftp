@@ -1,12 +1,13 @@
 package es.eriktorr.katas
 
 import es.eriktorr.katas.ApplicationContextLoader.loadApplicationContext
-import es.eriktorr.katas.unitspec.{DataProvider, UnitSpec}
+import es.eriktorr.katas.unitspec.UnitSpec
+import es.eriktorr.katas.unitspec.data.DataProvider
 import org.apache.ftpserver.usermanager.{AnonymousAuthentication, UsernamePasswordAuthentication}
 
 class FtpUsersSpec extends UnitSpec with DataProvider {
   private[this] val applicationContext = loadApplicationContext
-  private[this] val ftpUsers = new FtpUsers(applicationContext)
+  private[this] val ftpUsers = new FtpUsers(applicationContext.ftpUsers)
 
   "ftp users" should "find a user by her name" in {
     ftpUsers.getUserByName("operator") shouldBe OperatorFtpUser

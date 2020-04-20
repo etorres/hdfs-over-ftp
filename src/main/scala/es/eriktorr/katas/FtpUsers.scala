@@ -1,27 +1,25 @@
 package es.eriktorr.katas
 
 import org.apache.ftpserver.ftplet.{Authentication, User}
+import org.apache.ftpserver.usermanager.impl.AbstractUserManager
 import org.apache.ftpserver.usermanager.{
   AnonymousAuthentication,
   SaltedPasswordEncryptor,
   UsernamePasswordAuthentication
 }
-import org.apache.ftpserver.usermanager.impl.AbstractUserManager
 
-class FtpUsers(applicationContext: ApplicationContext)
+class FtpUsers(ftpUsers: Seq[FtpUser])
     extends AbstractUserManager("admin", new SaltedPasswordEncryptor) {
   override def getUserByName(username: String): User =
-    applicationContext.ftpUsers.find(_.name == username).getOrElse(ForbiddenUser)
+    ftpUsers.find(_.name == username).getOrElse(ForbiddenUser)
 
-  override def getAllUserNames: Array[String] =
-    applicationContext.ftpUsers.map(_.name).toArray
+  override def getAllUserNames: Array[String] = ftpUsers.map(_.name).toArray
 
   override def delete(username: String): Unit = {}
 
   override def save(user: User): Unit = {}
 
-  override def doesExist(username: String): Boolean =
-    applicationContext.ftpUsers.exists(_.name == username)
+  override def doesExist(username: String): Boolean = ftpUsers.exists(_.name == username)
 
   override def authenticate(authentication: Authentication): User =
     authentication match {
