@@ -1,4 +1,4 @@
-package es.eriktorr.katas.authorities
+package es.eriktorr.katas.usermanagement.authorization
 
 import scala.annotation.tailrec
 

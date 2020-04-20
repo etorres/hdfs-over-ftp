@@ -1,4 +1,4 @@
-package es.eriktorr.katas.authorities
+package es.eriktorr.katas.usermanagement.authorization
 
 import es.eriktorr.katas.unitspec.UnitSpec
 import org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission

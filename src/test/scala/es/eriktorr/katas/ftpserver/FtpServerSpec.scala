@@ -1,4 +1,4 @@
-package es.eriktorr.katas
+package es.eriktorr.katas.ftpserver
 
 import es.eriktorr.katas.ApplicationContextLoader.loadApplicationContext
 import es.eriktorr.katas.unitspec.UnitSpec

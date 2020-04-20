@@ -1,12 +1,12 @@
 package es.eriktorr.katas.unitspec.data
 
-import es.eriktorr.katas.FtpUser
-import es.eriktorr.katas.FtpUser.{EnabledDefault, MaxIdleTimeDefault}
-import es.eriktorr.katas.authorities.LoginAuthorizationMaker.{
+import es.eriktorr.katas.usermanagement.FtpUser.{EnabledDefault, MaxIdleTimeDefault}
+import es.eriktorr.katas.usermanagement.authorization.LoginAuthorizationMaker.{
   MaxLoginNumberDefault,
   MaxLoginPerIpDefault
 }
-import es.eriktorr.katas.authorities.WriteAuthorizationMaker.WritePermissionDefault
+import es.eriktorr.katas.usermanagement.authorization.WriteAuthorizationMaker.WritePermissionDefault
+import es.eriktorr.katas.usermanagement.FtpUser
 
 trait DataProvider {
   def aFtpUser(name: String, password: String, maxLoginPerIp: Int, enabled: Boolean): FtpUser =

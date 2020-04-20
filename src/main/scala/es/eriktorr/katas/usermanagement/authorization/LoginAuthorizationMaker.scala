@@ -1,6 +1,6 @@
-package es.eriktorr.katas.authorities
+package es.eriktorr.katas.usermanagement.authorization
 
-import es.eriktorr.katas.{AuthorizationMaker, FtpUser}
+import es.eriktorr.katas.usermanagement.FtpUser
 import org.apache.ftpserver.ftplet.Authority
 
 object LoginAuthorizationMaker extends AuthorizationMaker {

@@ -1,24 +1,23 @@
 package es.eriktorr.katas
 
 import com.typesafe.config.{Config, ConfigFactory}
-import es.eriktorr.katas.config.{FtpServerConfig, HdfsConfig}
+import es.eriktorr.katas.ftpserver.FtpServerConfig
+import es.eriktorr.katas.hdfsclient.HdfsClientConfig
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 
 final case class ApplicationContext(
   ftpServerConfig: FtpServerConfig,
-  ftpUsers: Seq[FtpUser],
-  hdfsConfig: HdfsConfig
+  hdfsClientConfig: HdfsClientConfig
 )
 
 object ApplicationContextLoader {
   def loadApplicationContext: ApplicationContext = {
     val config: Config = ConfigFactory.load()
 
-    val ftpServerConfig: FtpServerConfig = config.as[FtpServerConfig]("ftp-server")
-    val ftpUsers: Seq[FtpUser] = config.as[Seq[FtpUser]]("ftp-users")
-    val hdfsConfig: HdfsConfig = config.as[HdfsConfig]("hdfs-backend")
+    val ftpServerConfig: FtpServerConfig = config.as[FtpServerConfig]("ftpServer")
+    val hdfsClientConfig: HdfsClientConfig = config.as[HdfsClientConfig]("hdfsClient")
 
-    ApplicationContext(ftpServerConfig, ftpUsers, hdfsConfig)
+    ApplicationContext(ftpServerConfig, hdfsClientConfig)
   }
 }

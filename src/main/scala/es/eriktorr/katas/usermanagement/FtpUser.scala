@@ -1,8 +1,8 @@
-package es.eriktorr.katas
+package es.eriktorr.katas.usermanagement
 
 import java.util
 
-import es.eriktorr.katas.authorities.{
+import es.eriktorr.katas.usermanagement.authorization.{
   LoginAuthorizationMaker,
   TransferRateAuthorizationMaker,
   WriteAuthorizationMaker

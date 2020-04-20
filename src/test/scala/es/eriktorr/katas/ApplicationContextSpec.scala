@@ -1,6 +1,7 @@
 package es.eriktorr.katas
 
-import es.eriktorr.katas.config.{FtpServerConfig, HdfsConfig}
+import es.eriktorr.katas.ftpserver.FtpServerConfig
+import es.eriktorr.katas.hdfsclient.HdfsClientConfig
 import es.eriktorr.katas.unitspec.UnitSpec
 import es.eriktorr.katas.unitspec.data.DataProvider
 
@@ -11,10 +12,10 @@ class ApplicationContextSpec extends UnitSpec with DataProvider {
         hostname = Some("localhost"),
         port = 2221,
         dataPorts = "2222-2224",
-        enableAnonymous = true
+        enableAnonymous = true,
+        Seq(OperatorFtpUser, AnonymousFtpUser)
       ),
-      Seq(OperatorFtpUser, AnonymousFtpUser),
-      HdfsConfig(uri = "hdfs://localhost:9000", superUser = "root", superGroup = "supergroup")
+      HdfsClientConfig(uri = "hdfs://localhost:9000", superUser = "root", superGroup = "supergroup")
     )
   }
 }

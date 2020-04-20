@@ -1,4 +1,4 @@
-package es.eriktorr.katas
+package es.eriktorr.katas.usermanagement
 
 import org.apache.ftpserver.ftplet.{Authentication, User}
 import org.apache.ftpserver.usermanager.impl.AbstractUserManager

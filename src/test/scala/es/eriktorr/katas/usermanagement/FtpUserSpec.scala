@@ -1,7 +1,10 @@
-package es.eriktorr.katas
+package es.eriktorr.katas.usermanagement
 
-import es.eriktorr.katas.authorities.WriteAuthorizationMaker.WritePermissionDefault
-import es.eriktorr.katas.authorities.{ConcurrentLoginAuthority, TransferRateAuthority}
+import es.eriktorr.katas.usermanagement.authorization.WriteAuthorizationMaker.WritePermissionDefault
+import es.eriktorr.katas.usermanagement.authorization.{
+  ConcurrentLoginAuthority,
+  TransferRateAuthority
+}
 import es.eriktorr.katas.unitspec.matchers.CustomMatchers._
 import org.apache.ftpserver.usermanager.impl.{BaseUser, WritePermission}
 import org.scalatest.flatspec.AnyFlatSpec

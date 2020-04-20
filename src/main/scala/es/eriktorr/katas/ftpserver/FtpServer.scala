@@ -1,5 +1,7 @@
-package es.eriktorr.katas
+package es.eriktorr.katas.ftpserver
 
+import es.eriktorr.katas.ApplicationContext
+import es.eriktorr.katas.usermanagement.FtpUsers
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory
 import org.apache.ftpserver.listener.ListenerFactory
 import org.apache.ftpserver.{
@@ -47,7 +49,7 @@ object FtpServer {
     connectionConfigFactory.setAnonymousLoginEnabled(ftpServerConfig.enableAnonymous)
 
     val ftpServerFactory = new FtpServerFactory
-    ftpServerFactory.setUserManager(new FtpUsers(context.ftpUsers))
+    ftpServerFactory.setUserManager(new FtpUsers(ftpServerConfig.ftpUsers))
     ftpServerFactory.setFileSystem(new NativeFileSystemFactory)
     ftpServerFactory.setListeners(Map("default" -> listenerFactory.createListener()).asJava)
     ftpServerFactory.setConnectionConfig(connectionConfigFactory.createConnectionConfig())

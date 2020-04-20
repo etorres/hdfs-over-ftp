@@ -1,6 +1,6 @@
 package es.eriktorr.katas.unitspec.matchers
 
-import es.eriktorr.katas.FtpUser
+import es.eriktorr.katas.usermanagement.FtpUser
 import org.apache.ftpserver.ftplet.User
 import org.apache.ftpserver.usermanager.impl.{
   ConcurrentLoginPermission,
