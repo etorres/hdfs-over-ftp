@@ -1,7 +1,7 @@
 package es.eriktorr.katas
 
+import es.eriktorr.katas.filesystem.HdfsClientConfig
 import es.eriktorr.katas.ftpserver.FtpServerConfig
-import es.eriktorr.katas.hdfsclient.HdfsClientConfig
 import es.eriktorr.katas.unitspec.UnitSpec
 import es.eriktorr.katas.unitspec.data.DataProvider
 

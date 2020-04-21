@@ -1,8 +1,8 @@
 package es.eriktorr.katas
 
 import com.typesafe.config.{Config, ConfigFactory}
+import es.eriktorr.katas.filesystem.HdfsClientConfig
 import es.eriktorr.katas.ftpserver.FtpServerConfig
-import es.eriktorr.katas.hdfsclient.HdfsClientConfig
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 

@@ -1,14 +1,15 @@
 package es.eriktorr.katas.filesystem
 
-import es.eriktorr.katas.hdfsclient.HdfsClient
 import org.apache.commons.io.FilenameUtils.{concat, normalizeNoEndSeparator, separatorsToUnix}
 import org.apache.ftpserver.ftplet.{FileSystemView, FtpFile, User}
+import org.apache.hadoop.hdfs.DistributedFileSystem
 
-class HdfsFileSystemView(hdfsClient: HdfsClient, user: User) extends FileSystemView {
+class HdfsFileSystemView(distributedFileSystem: DistributedFileSystem, user: User)
+    extends FileSystemView {
   @SuppressWarnings(Array("org.wartremover.warts.Var"))
   private[this] var workingDirectory = "/"
 
-  override def getHomeDirectory: FtpFile = HdfsFtpFile(hdfsClient, "/", user)
+  override def getHomeDirectory: FtpFile = HdfsFtpFile(distributedFileSystem, "/", user)
 
   override def getWorkingDirectory: FtpFile = ???
 
@@ -16,7 +17,7 @@ class HdfsFileSystemView(hdfsClient: HdfsClient, user: User) extends FileSystemV
 
   override def getFile(file: String): FtpFile =
     HdfsFtpFile(
-      hdfsClient,
+      distributedFileSystem,
       normalizeNoEndSeparator(concat(workingDirectory, separatorsToUnix(file))),
       user
     )

@@ -1,9 +1,34 @@
 package es.eriktorr.katas.filesystem
 
-import es.eriktorr.katas.hdfsclient.HdfsClient
-import org.apache.ftpserver.ftplet.{FileSystemFactory, FileSystemView, User}
+import java.net.URI
 
-final class HdfsFileSystemManager(hdfsClient: HdfsClient) extends FileSystemFactory {
-  override def createFileSystemView(user: User): FileSystemView =
-    new HdfsFileSystemView(hdfsClient, user)
+import es.eriktorr.katas.ApplicationContext
+import org.apache.ftpserver.ftplet.{FileSystemFactory, FileSystemView, User}
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.hdfs.DistributedFileSystem
+
+trait HdfsFileSystemManager extends FileSystemFactory
+
+object HdfsFileSystemManager {
+  private class InnerHdfsFileSystemManager(distributedFileSystem: DistributedFileSystem)
+      extends HdfsFileSystemManager {
+    override def createFileSystemView(user: User): FileSystemView =
+      new HdfsFileSystemView(distributedFileSystem, user)
+  }
+
+  def apply(applicationContext: ApplicationContext): HdfsFileSystemManager = {
+    val hdfsClientConfig = applicationContext.hdfsClientConfig
+
+    val configuration = new Configuration()
+    configuration.set("fs.defaultFS", hdfsClientConfig.uri)
+    configuration.set(
+      "hadoop.job.ugi",
+      s"${hdfsClientConfig.superUser},${hdfsClientConfig.superGroup}"
+    )
+
+    val dfs = new DistributedFileSystem
+    dfs.initialize(new URI(hdfsClientConfig.uri), configuration)
+
+    new InnerHdfsFileSystemManager(dfs)
+  }
 }

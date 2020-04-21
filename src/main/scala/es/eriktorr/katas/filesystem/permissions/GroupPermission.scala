@@ -1,4 +1,4 @@
-package es.eriktorr.katas.hdfsclient.permissions
+package es.eriktorr.katas.filesystem.permissions
 
 import es.eriktorr.katas.usermanagement.FtpUser
 import org.apache.ftpserver.ftplet.User

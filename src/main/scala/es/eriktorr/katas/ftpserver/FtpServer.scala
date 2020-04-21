@@ -2,7 +2,6 @@ package es.eriktorr.katas.ftpserver
 
 import es.eriktorr.katas.ApplicationContext
 import es.eriktorr.katas.filesystem.HdfsFileSystemManager
-import es.eriktorr.katas.hdfsclient.HdfsClient
 import es.eriktorr.katas.usermanagement.FtpUsers
 import org.apache.ftpserver.listener.ListenerFactory
 import org.apache.ftpserver.{
@@ -51,7 +50,7 @@ object FtpServer {
 
     val ftpServerFactory = new FtpServerFactory
     ftpServerFactory.setUserManager(new FtpUsers(ftpServerConfig.ftpUsers))
-    ftpServerFactory.setFileSystem(new HdfsFileSystemManager(HdfsClient(context)))
+    ftpServerFactory.setFileSystem(HdfsFileSystemManager(context))
     ftpServerFactory.setListeners(Map("default" -> listenerFactory.createListener()).asJava)
     ftpServerFactory.setConnectionConfig(connectionConfigFactory.createConnectionConfig())
 

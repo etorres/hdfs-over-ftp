@@ -3,33 +3,90 @@ package es.eriktorr.katas.filesystem
 import java.io.{InputStream, OutputStream}
 import java.util
 
-import es.eriktorr.katas.hdfsclient.HdfsClient
+import com.typesafe.scalalogging.LazyLogging
+import es.eriktorr.katas.filesystem.permissions.{
+  FileAttributes,
+  GroupPermission,
+  OtherPermission,
+  UserPermission
+}
 import org.apache.ftpserver.ftplet.{FtpFile, User}
+import org.apache.hadoop.fs.Path
+import org.apache.hadoop.hdfs.DistributedFileSystem
 
 import scala.jdk.CollectionConverters._
+import scala.util.{Failure, Success, Try}
 
-case class HdfsFtpFile(hdfsClient: HdfsClient, fileName: String, user: User) extends FtpFile {
+case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: String, user: User)
+    extends FtpFile
+    with LazyLogging {
   override def getAbsolutePath: String = ???
 
   override def getName: String = ???
 
   override def isHidden: Boolean = false
 
-  override def isDirectory: Boolean = hdfsClient.isDirectory(fileName)
+  override def isDirectory: Boolean = fileStatus(fileName) match {
+    case Success(fileStatus) => fileStatus.isDirectory
+    case Failure(exception) =>
+      warn(message = "isDirectory failed", exception = exception, response = false)
+  }
 
-  override def isFile: Boolean = hdfsClient.isFile(fileName)
+  override def isFile: Boolean = fileStatus(fileName) match {
+    case Success(fileStatus) => fileStatus.isFile
+    case Failure(exception) =>
+      warn(message = "isFile failed", exception = exception, response = false)
+  }
 
-  override def doesExist(): Boolean = hdfsClient.doesExist(fileName)
+  override def doesExist(): Boolean = fileStatus(fileName) match {
+    case Success(_) => true
+    case Failure(exception) =>
+      warn(message = "doesExist failed", exception = exception, response = false)
+  }
 
-  override def isReadable: Boolean = hdfsClient.isReadable(fileName, user)
+  override def isReadable: Boolean = fileStatus(fileName) match {
+    case Success(fileStatus) =>
+      val fileAttributes = FileAttributes(
+        owner = fileStatus.getOwner,
+        group = fileStatus.getGroup,
+        permissions = fileStatus.getPermission.toString
+      )
+      readValidators.find(_.canRead(fileAttributes, user)) match {
+        case Some(_) => true
+        case None => false
+      }
+    case Failure(exception) =>
+      warn(message = "isReadable failed", exception = exception, response = false)
+  }
 
-  override def isWritable: Boolean = hdfsClient.isWritable(fileName, user)
+  override def isWritable: Boolean = fileStatus(fileName) match {
+    case Success(fileStatus) =>
+      val fileAttributes = FileAttributes(
+        owner = fileStatus.getOwner,
+        group = fileStatus.getGroup,
+        permissions = fileStatus.getPermission.toString
+      )
+      readValidators.find(_.canWrite(fileAttributes, user)) match {
+        case Some(_) => true
+        case None => false
+      }
+    case Failure(exception) =>
+      warn(message = "isWritable failed", exception = exception, response = false)
+  }
 
   override def isRemovable: Boolean = ???
 
-  override def getOwnerName: String = hdfsClient.getOwnerName(fileName)
+  override def getOwnerName: String = fileStatus(fileName) match {
+    case Success(fileStatus) => fileStatus.getOwner
+    case Failure(exception) =>
+      warn(message = "getOwnerName failed", exception = exception, response = "")
+  }
 
-  override def getGroupName: String = hdfsClient.getGroupName(fileName)
+  override def getGroupName: String = fileStatus(fileName) match {
+    case Success(fileStatus) => fileStatus.getGroup
+    case Failure(exception) =>
+      warn(message = "getGroupName failed", exception = exception, response = "")
+  }
 
   override def getLinkCount: Int = ???
 
@@ -47,10 +104,30 @@ case class HdfsFtpFile(hdfsClient: HdfsClient, fileName: String, user: User) ext
 
   override def move(destination: FtpFile): Boolean = ???
 
-  override def listFiles(): util.List[_ <: FtpFile] =
-    hdfsClient.listFiles(fileName).map(f => HdfsFtpFile(hdfsClient, f, user)).asJava
+  override def listFiles(): util.List[_ <: FtpFile] = {
+    val fileNames = Try {
+      distributedFileSystem.listStatus(new Path(fileName))
+    } match {
+      case Success(listStatus) => listStatus.toList.map(_.getPath.toString)
+      case Failure(exception) =>
+        warn(message = "listStatus failed", exception = exception, response = Seq.empty)
+    }
+    fileNames.map(fn => HdfsFtpFile(distributedFileSystem, fn, user)).asJava
+  }
 
   override def createOutputStream(offset: Long): OutputStream = ???
 
   override def createInputStream(offset: Long): InputStream = ???
+
+  private[this] lazy val readValidators = Seq(UserPermission, GroupPermission, OtherPermission)
+
+  private[this] def fileStatus(path: String) =
+    Try {
+      distributedFileSystem.getFileStatus(new Path(path))
+    }
+
+  private[this] def warn[A](message: String, exception: Throwable, response: A): A = {
+    logger.warn(message, exception)
+    response
+  }
 }
