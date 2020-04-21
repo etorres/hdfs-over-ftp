@@ -1,6 +1,6 @@
 package es.eriktorr.katas.filesystem
 
-import java.io.{InputStream, OutputStream}
+import java.io.{ByteArrayInputStream, InputStream, OutputStream}
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
@@ -126,7 +126,20 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
 
   override def createOutputStream(offset: Long): OutputStream = ???
 
-  override def createInputStream(offset: Long): InputStream = ???
+  override def createInputStream(offset: Long): InputStream =
+    if (isReadable) {
+      Try {
+        distributedFileSystem.open(new Path(fileName))
+      } match {
+        case Success(inputStream) => inputStream
+        case Failure(exception) =>
+          warn(
+            message = "createInputStream failed",
+            exception = exception,
+            response = new ByteArrayInputStream(exception.getMessage.getBytes())
+          )
+      }
+    } else new ByteArrayInputStream(s"No read permission: $fileName".getBytes)
 
   private[this] lazy val readValidators = Seq(UserPermission, GroupPermission, OtherPermission)
 

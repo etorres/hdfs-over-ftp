@@ -9,24 +9,10 @@ import org.apache.hadoop.hdfs.client.HdfsUtils
 
 class HdfsFtpFileSpec extends UnitSpec with DataProvider {
   private[this] val applicationContext = loadApplicationContext
-//  private[this] val hdfsFileSystemManager = HdfsFileSystemManager(applicationContext)
-//  private[this] val fileSystemView = hdfsFileSystemManager.createFileSystemView(OperatorFtpUser)
 
   "HDFS" should "be healthy" in {
     HdfsUtils.isHealthy(
-      new URI(s"${applicationContext.hdfsClientConfig.uri}/user/root/hdfs-site.xml")
+      new URI(s"${applicationContext.hdfsClientConfig.uri}")
     ) shouldBe true
   }
-
-//  "HDFS client" should "distinguish directories from files" in {
-//
-//    val hdfsClient = HdfsClient(applicationContext)
-//
-//    // TODO
-//    val kk = hdfsClient.isReadable("/user/root", OperatorFtpUser)
-//    println(kk)
-//    // TODO
-//
-//    hdfsClient.isDirectory("/user/root") shouldBe true
-//  }
 }

@@ -14,7 +14,8 @@ libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-hdfs-client" % HadoopVersion,
   "org.apache.hadoop" % "hadoop-common" % HadoopVersion,
   "org.scalatest" %% "scalatest" % "3.1.1" % Test,
-  "commons-net" % "commons-net" % "3.6" % Test
+  "commons-net" % "commons-net" % "3.6" % Test,
+  "com.github.pathikrit" %% "better-files" % "3.8.0" % Test
 )
 
 scalacOptions ++= Seq(
