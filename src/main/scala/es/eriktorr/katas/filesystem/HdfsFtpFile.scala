@@ -10,6 +10,11 @@ import es.eriktorr.katas.filesystem.permissions.{
   OtherPermission,
   UserPermission
 }
+import org.apache.commons.io.FilenameUtils.{
+  normalizeNoEndSeparator,
+  separatorsToUnix,
+  getName => nameMinusPath
+}
 import org.apache.ftpserver.ftplet.{FtpFile, User}
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.hdfs.DistributedFileSystem
@@ -20,9 +25,9 @@ import scala.util.{Failure, Success, Try}
 case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: String, user: User)
     extends FtpFile
     with LazyLogging {
-  override def getAbsolutePath: String = ???
+  override def getAbsolutePath: String = normalizeNoEndSeparator(separatorsToUnix(fileName))
 
-  override def getName: String = ???
+  override def getName: String = nameMinusPath(getAbsolutePath)
 
   override def isHidden: Boolean = false
 
@@ -88,9 +93,13 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
       warn(message = "getGroupName failed", exception = exception, response = "")
   }
 
-  override def getLinkCount: Int = ???
+  override def getLinkCount: Int = if (isDirectory()) 3 else 1
 
-  override def getLastModified: Long = ???
+  override def getLastModified: Long = fileStatus(fileName) match {
+    case Success(fileStatus) => fileStatus.getModificationTime
+    case Failure(exception) =>
+      warn(message = "getLastModified failed", exception = exception, response = 0L)
+  }
 
   override def setLastModified(time: Long): Boolean = ???
 
@@ -110,7 +119,7 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
     } match {
       case Success(listStatus) => listStatus.toList.map(_.getPath.toString)
       case Failure(exception) =>
-        warn(message = "listStatus failed", exception = exception, response = Seq.empty)
+        warn(message = "listFiles failed", exception = exception, response = Seq.empty)
     }
     fileNames.map(fn => HdfsFtpFile(distributedFileSystem, fn, user)).asJava
   }

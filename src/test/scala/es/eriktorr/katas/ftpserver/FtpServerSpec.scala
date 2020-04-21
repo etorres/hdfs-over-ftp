@@ -17,6 +17,6 @@ class FtpServerSpec extends UnitSpec {
       _ <- ftpClient.close()
     } yield files
 
-    files.success.value shouldBe Seq()
+    files.success.value shouldBe Seq("user")
   }
 }
