@@ -2,7 +2,6 @@ package es.eriktorr.katas.filesystem
 
 import java.net.URI
 
-import es.eriktorr.katas.ApplicationContext
 import org.apache.ftpserver.ftplet.{FileSystemFactory, FileSystemView, User}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hdfs.DistributedFileSystem
@@ -16,9 +15,7 @@ object HdfsFileSystemManager {
       new HdfsFileSystemView(distributedFileSystem, user)
   }
 
-  def apply(applicationContext: ApplicationContext): HdfsFileSystemManager = {
-    val hdfsClientConfig = applicationContext.hdfsClientConfig
-
+  def apply(hdfsClientConfig: HdfsClientConfig): HdfsFileSystemManager = {
     val configuration = new Configuration()
     configuration.set("fs.defaultFS", hdfsClientConfig.uri)
     configuration.set(
