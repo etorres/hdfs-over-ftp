@@ -1,6 +1,6 @@
 package es.eriktorr.katas.filesystem
 
-import java.io.{ByteArrayInputStream, InputStream, OutputStream}
+import java.io.{ByteArrayInputStream, FileNotFoundException, InputStream, OutputStream}
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
@@ -11,9 +11,10 @@ import es.eriktorr.katas.filesystem.permissions.{
   UserPermission
 }
 import org.apache.ftpserver.ftplet.{FtpFile, User}
-import org.apache.hadoop.fs.Path
+import org.apache.hadoop.fs.{FileStatus, Path}
 import org.apache.hadoop.hdfs.DistributedFileSystem
 
+import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
 
@@ -47,12 +48,8 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
 
   override def isReadable: Boolean = fileStatus(fileName) match {
     case Success(fileStatus) =>
-      val fileAttributes = FileAttributes(
-        owner = fileStatus.getOwner,
-        group = fileStatus.getGroup,
-        permissions = fileStatus.getPermission.toString
-      )
-      readValidators.find(_.canRead(fileAttributes, user)) match {
+      val fileAttributes = fileAttributesFrom(fileStatus)
+      permissionValidators.find(_.canRead(fileAttributes, user)) match {
         case Some(_) => true
         case None => false
       }
@@ -60,20 +57,31 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
       warn(message = "isReadable failed", exception = exception, response = false)
   }
 
-  override def isWritable: Boolean = fileStatus(fileName) match {
-    case Success(fileStatus) =>
-      val fileAttributes = FileAttributes(
-        owner = fileStatus.getOwner,
-        group = fileStatus.getGroup,
-        permissions = fileStatus.getPermission.toString
-      )
-      readValidators.find(_.canWrite(fileAttributes, user)) match {
-        case Some(_) => true
-        case None => false
+  override def isWritable: Boolean = {
+    @tailrec
+    def isWritable(path: String): Boolean = fileStatus(path) match {
+      case Success(fileStatus) => {
+        val fileAttributes = fileAttributesFrom(fileStatus)
+        permissionValidators.find(_.canWrite(fileAttributes, user)) match {
+          case Some(_) => true
+          case None => false
+        }
       }
-    case Failure(exception) =>
-      warn(message = "isWritable failed", exception = exception, response = false)
+      case Failure(e: FileNotFoundException) =>
+        if (path == "/") warn(message = "isWritable failed", exception = e, response = false)
+        else isWritable(pathToParent(path))
+      case Failure(exception) =>
+        warn(message = "isWritable failed", exception = exception, response = false)
+    }
+    isWritable(fileName)
   }
+
+  private[this] def fileAttributesFrom(fileStatus: FileStatus) =
+    FileAttributes(
+      owner = fileStatus.getOwner,
+      group = fileStatus.getGroup,
+      permissions = fileStatus.getPermission.toString
+    )
 
   override def isRemovable: Boolean = ???
 
@@ -140,7 +148,8 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
     } else
       new ByteArrayInputStream(s"File cannot be read; No read permission on: $fileName".getBytes)
 
-  private[this] lazy val readValidators = Seq(UserPermission, GroupPermission, OtherPermission)
+  private[this] lazy val permissionValidators =
+    Seq(UserPermission, GroupPermission, OtherPermission)
 
   private[this] def fileStatus(path: String) =
     Try {

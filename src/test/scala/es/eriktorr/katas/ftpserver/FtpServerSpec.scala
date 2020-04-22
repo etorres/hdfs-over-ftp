@@ -8,6 +8,7 @@ import es.eriktorr.katas.ApplicationContextLoader.loadApplicationContext
 import es.eriktorr.katas.unitspec.UnitSpec
 import es.eriktorr.katas.unitspec.clients.FtpClient
 import org.apache.commons.io.FileUtils
+import org.apache.commons.lang.RandomStringUtils
 
 import scala.util.{Failure, Success, Try}
 
@@ -34,6 +35,12 @@ class FtpServerSpec extends UnitSpec {
   "ftp server" should "change the working directory of the user" in {
     val isChanged = ftp[Boolean](_.changeWorkingDirectory("/user/root"))
     isChanged.success.value shouldBe true
+  }
+
+  "ftp server" should "create a new directory" in {
+    val directory = RandomStringUtils.randomAlphanumeric(32)
+    val isCreated = ftp[Boolean](_.makeDirectory(s"/user/root/$directory"))
+    isCreated.success.value shouldBe true
   }
 
   private[this] def ftp[A](fx: FtpClient => Try[A]): Try[A] = {

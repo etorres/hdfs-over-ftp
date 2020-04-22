@@ -13,6 +13,7 @@ trait FtpClient {
   def listFiles(path: String): Try[Seq[String]]
   def fetchFile(source: String, destination: String): Try[Boolean]
   def changeWorkingDirectory(path: String): Try[Boolean]
+  def makeDirectory(path: String): Try[Boolean]
 }
 
 object FtpClient {
@@ -33,6 +34,10 @@ object FtpClient {
 
     override def changeWorkingDirectory(path: String): Try[Boolean] = Try {
       ftpClient.changeWorkingDirectory(path)
+    }
+
+    override def makeDirectory(path: String): Try[Boolean] = Try {
+      ftpClient.makeDirectory(path)
     }
   }
 
