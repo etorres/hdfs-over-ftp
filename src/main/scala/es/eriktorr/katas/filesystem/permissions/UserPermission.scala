@@ -7,5 +7,10 @@ object UserPermission extends PermissionValidator {
     fileAttributes: FileAttributes,
     user: User,
     permission: Char
-  ): Boolean = fileAttributes.owner == user.getName && fileAttributes.permissions(0) == permission
+  ): Boolean =
+    (fileAttributes.owner == user.getName) && (permission match {
+      case 'r' => fileAttributes.permissions(0) == permission
+      case 'w' => fileAttributes.permissions(1) == permission
+      case _ => false
+    })
 }

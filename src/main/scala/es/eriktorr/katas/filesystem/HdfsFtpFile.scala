@@ -60,13 +60,18 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
   override def isWritable: Boolean = {
     @tailrec
     def isWritable(path: String): Boolean = fileStatus(path) match {
-      case Success(fileStatus) => {
+      case Success(fileStatus) =>
         val fileAttributes = fileAttributesFrom(fileStatus)
-        permissionValidators.find(_.canWrite(fileAttributes, user)) match {
+        val kk = permissionValidators.find(_.canWrite(fileAttributes, user)) match {
           case Some(_) => true
           case None => false
         }
-      }
+        // TODO
+        println(
+          s"\n\n >> HERE: $path is writable ${kk.toString}. Permissions: ${fileAttributes.toString}\n"
+        )
+        kk
+      // TODO
       case Failure(e: FileNotFoundException) =>
         if (path == "/") warn(message = "isWritable failed", exception = e, response = false)
         else isWritable(pathToParent(path))

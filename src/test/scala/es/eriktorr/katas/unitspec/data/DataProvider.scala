@@ -1,12 +1,12 @@
 package es.eriktorr.katas.unitspec.data
 
+import es.eriktorr.katas.usermanagement.FtpUser
 import es.eriktorr.katas.usermanagement.FtpUser.{EnabledDefault, MaxIdleTimeDefault}
 import es.eriktorr.katas.usermanagement.authorization.LoginAuthorizationMaker.{
   MaxLoginNumberDefault,
   MaxLoginPerIpDefault
 }
 import es.eriktorr.katas.usermanagement.authorization.WriteAuthorizationMaker.WritePermissionDefault
-import es.eriktorr.katas.usermanagement.FtpUser
 
 trait DataProvider {
   def aFtpUser(
@@ -14,6 +14,7 @@ trait DataProvider {
     password: String,
     groups: Seq[String],
     maxLoginPerIp: Int,
+    writePermission: Boolean,
     enabled: Boolean
   ): FtpUser =
     FtpUser(
@@ -25,15 +26,16 @@ trait DataProvider {
       maxIdleTime = Some(MaxIdleTimeDefault),
       maxDownloadRate = None,
       maxUploadRate = None,
-      writePermission = Some(WritePermissionDefault),
+      writePermission = Some(writePermission),
       enabled = Some(enabled)
     )
 
-  val OperatorFtpUser: FtpUser = aFtpUser(
-    name = "operator",
+  val RootFtpUser: FtpUser = aFtpUser(
+    name = "root",
     password = "62370436:28142C8301BFAC1959EAEA30991958AD",
     groups = Seq("supergroup"),
     maxLoginPerIp = MaxLoginPerIpDefault,
+    writePermission = true,
     enabled = EnabledDefault
   )
 
@@ -42,6 +44,7 @@ trait DataProvider {
     password = "",
     groups = Seq.empty,
     maxLoginPerIp = 1,
+    writePermission = WritePermissionDefault,
     enabled = false
   )
 }

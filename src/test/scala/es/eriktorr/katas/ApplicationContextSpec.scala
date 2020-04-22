@@ -13,7 +13,7 @@ class ApplicationContextSpec extends UnitSpec with DataProvider {
         port = 2221,
         dataPorts = "2222-2224",
         enableAnonymous = true,
-        Seq(OperatorFtpUser, AnonymousFtpUser)
+        Seq(RootFtpUser, AnonymousFtpUser)
       ),
       HdfsClientConfig(uri = "hdfs://localhost:9000", superUser = "root", superGroup = "supergroup")
     )

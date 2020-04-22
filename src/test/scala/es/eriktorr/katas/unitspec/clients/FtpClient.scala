@@ -46,7 +46,7 @@ object FtpClient {
     ftpClient.connect(hostname, port)
     val replyCode = ftpClient.getReplyCode
     if (FTPReply.isPositiveCompletion(replyCode) && ftpClient.login(
-        "operator",
+        "root",
         "s3C4e7"
       ))
       Success(new UnsafeFtpClient(ftpClient))

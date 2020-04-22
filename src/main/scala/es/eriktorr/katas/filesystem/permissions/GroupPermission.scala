@@ -14,7 +14,12 @@ object GroupPermission extends PermissionValidator {
       case _ => Seq.empty
     }
     groups.find(_ == fileAttributes.group) match {
-      case Some(_) => fileAttributes.permissions(3) == permission
+      case Some(_) =>
+        permission match {
+          case 'r' => fileAttributes.permissions(3) == permission
+          case 'w' => fileAttributes.permissions(4) == permission
+          case _ => false
+        }
       case None => false
     }
   }

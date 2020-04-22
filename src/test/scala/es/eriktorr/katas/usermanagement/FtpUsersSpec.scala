@@ -3,6 +3,7 @@ package es.eriktorr.katas.usermanagement
 import es.eriktorr.katas.ApplicationContextLoader.loadApplicationContext
 import es.eriktorr.katas.unitspec.UnitSpec
 import es.eriktorr.katas.unitspec.data.DataProvider
+import org.apache.ftpserver.ftplet.AuthenticationFailedException
 import org.apache.ftpserver.usermanager.{AnonymousAuthentication, UsernamePasswordAuthentication}
 
 class FtpUsersSpec extends UnitSpec with DataProvider {
@@ -10,11 +11,11 @@ class FtpUsersSpec extends UnitSpec with DataProvider {
   private[this] val ftpUsers = new FtpUsers(applicationContext.ftpServerConfig.ftpUsers)
 
   "ftp users" should "find a user by her name" in {
-    ftpUsers.getUserByName("operator") shouldBe OperatorFtpUser
+    ftpUsers.getUserByName("root") shouldBe RootFtpUser
   }
 
   "ftp users" should "list all usernames" in {
-    ftpUsers.getAllUserNames shouldBe Array("operator", "anonymous")
+    ftpUsers.getAllUserNames shouldBe Array("root", "anonymous")
   }
 
   "ftp users" should "identify a nonexistent user" in {
@@ -22,12 +23,12 @@ class FtpUsersSpec extends UnitSpec with DataProvider {
   }
 
   "ftp users" should "identify a existent user" in {
-    ftpUsers.doesExist("operator") shouldBe true
+    ftpUsers.doesExist("root") shouldBe true
   }
 
   "ftp users" should "authenticate a user by its username and password" in {
-    ftpUsers.authenticate(new UsernamePasswordAuthentication("operator", "s3C4e7")) shouldBe
-      OperatorFtpUser
+    ftpUsers.authenticate(new UsernamePasswordAuthentication("root", "s3C4e7")) shouldBe
+      RootFtpUser
   }
 
   "ftp users" should "authenticate an anonymous access" in {
@@ -35,6 +36,8 @@ class FtpUsersSpec extends UnitSpec with DataProvider {
   }
 
   "ftp users" should "reject invalid username and password" in {
-    ftpUsers.authenticate(new UsernamePasswordAuthentication("operator", "fake")) shouldBe ForbiddenUser
+    the[AuthenticationFailedException] thrownBy ftpUsers.authenticate(
+      new UsernamePasswordAuthentication("root", "fake")
+    ) should have message "Authentication failed"
   }
 }

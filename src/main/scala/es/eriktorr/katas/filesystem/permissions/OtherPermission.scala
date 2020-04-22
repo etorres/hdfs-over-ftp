@@ -7,6 +7,9 @@ object OtherPermission extends PermissionValidator {
     fileAttributes: FileAttributes,
     user: User,
     permission: Char
-  ): Boolean =
-    fileAttributes.permissions(6) == permission
+  ): Boolean = permission match {
+    case 'r' => fileAttributes.permissions(6) == permission
+    case 'w' => fileAttributes.permissions(7) == permission
+    case _ => false
+  }
 }
