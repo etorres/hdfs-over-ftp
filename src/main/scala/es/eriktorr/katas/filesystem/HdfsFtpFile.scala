@@ -10,11 +10,6 @@ import es.eriktorr.katas.filesystem.permissions.{
   OtherPermission,
   UserPermission
 }
-import org.apache.commons.io.FilenameUtils.{
-  normalizeNoEndSeparator,
-  separatorsToUnix,
-  getName => nameMinusPath
-}
 import org.apache.ftpserver.ftplet.{FtpFile, User}
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.hdfs.DistributedFileSystem
@@ -24,10 +19,11 @@ import scala.util.{Failure, Success, Try}
 
 case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: String, user: User)
     extends FtpFile
-    with LazyLogging {
-  override def getAbsolutePath: String = normalizeNoEndSeparator(separatorsToUnix(fileName))
+    with LazyLogging
+    with FileNameProcessing {
+  override def getAbsolutePath: String = normalized(fileName)
 
-  override def getName: String = nameMinusPath(getAbsolutePath)
+  override def getName: String = simpleNameFrom(getAbsolutePath)
 
   override def isHidden: Boolean = false
 
@@ -136,10 +132,13 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
           warn(
             message = "createInputStream failed",
             exception = exception,
-            response = new ByteArrayInputStream(exception.getMessage.getBytes())
+            response = new ByteArrayInputStream(
+              s"Internal error while opening the file: $fileName".getBytes()
+            )
           )
       }
-    } else new ByteArrayInputStream(s"No read permission: $fileName".getBytes)
+    } else
+      new ByteArrayInputStream(s"File cannot be read; No read permission on: $fileName".getBytes)
 
   private[this] lazy val readValidators = Seq(UserPermission, GroupPermission, OtherPermission)
 

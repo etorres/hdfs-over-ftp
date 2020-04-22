@@ -2,6 +2,8 @@
 
 This is rewrite of the project [hdfs-over-ftp](https://github.com/iponweb/hdfs-over-ftp). I found in this project an opportunity to gain experience and developing my skills in Java-to-Scala migration. However, I reduced the scope excluding some advanced features like modifying user accounts (add, delete FTP users), also only non-SSL is supported.
 
+Regarding 
+
 ## Configuring your environment
 
 Pull the Hadoop docker image:

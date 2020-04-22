@@ -12,6 +12,7 @@ trait FtpClient {
   def close(): Try[Unit]
   def listFiles(path: String): Try[Seq[String]]
   def fetchFile(source: String, destination: String): Try[Boolean]
+  def changeWorkingDirectory(path: String): Try[Boolean]
 }
 
 object FtpClient {
@@ -28,6 +29,10 @@ object FtpClient {
         outputStream <- File(destination).newOutputStream.autoClosed
       } done.set(ftpClient.retrieveFile(source, outputStream))
       done.get()
+    }
+
+    override def changeWorkingDirectory(path: String): Try[Boolean] = Try {
+      ftpClient.changeWorkingDirectory(path)
     }
   }
 

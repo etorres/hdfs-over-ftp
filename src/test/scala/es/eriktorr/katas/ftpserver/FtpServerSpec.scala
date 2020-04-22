@@ -31,6 +31,11 @@ class FtpServerSpec extends UnitSpec {
     fileContent.get() shouldBe HdfsSiteContent
   }
 
+  "ftp server" should "change the working directory of the user" in {
+    val isChanged = ftp[Boolean](_.changeWorkingDirectory("/user/root"))
+    isChanged.success.value shouldBe true
+  }
+
   private[this] def ftp[A](fx: FtpClient => Try[A]): Try[A] = {
     val ftpServer = FtpServer(applicationContext)
     ftpServer.start()
