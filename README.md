@@ -7,20 +7,36 @@ This is rewrite of the project [hdfs-over-ftp](https://github.com/iponweb/hdfs-o
 Pull the Hadoop docker image:
 
 ```shell script
-docker pull sequenceiq/hadoop-docker:2.7.1
+docker pull sequenceiq/hadoop-docker:2.6.0
 ```
 
 You can check the image by starting a container locally in your laptop:
 
 ```shell script
-docker run -p 50070:50070 -p 8030:8030 -it sequenceiq/hadoop-docker:2.7.1 /etc/bootstrap.sh -bash
+docker run -p 50070:50070 -p 50010:50010 -p 8030:8030 -it sequenceiq/hadoop-docker:2.6.0 /etc/bootstrap.sh -bash
+```
+
+__WARNING__
+
+Hadoop name node will use the container hostname to build a download URL. This URL will include an IP address that is relative to the container (e.g `172.17.0.2`). Clients will download the file from the data node pointed by this URL. Therefore, you will need to add an alias to the container in your development environment:
+
+```shell script
+sudo ifconfig lo0 alias 172.17.0.2
+```
+
+You can always remove this alias with the following command:
+
+```shell script
+sudo ifconfig lo0 -alias 172.17.0.2
 ```
 
 You can find out all the ports mapped with the docker port command (you can find the container id as usual with `docker ps`):
 
 ```text
 ~ docker port 289c381868ed
+50010/tcp -> 0.0.0.0:50010
 50070/tcp -> 0.0.0.0:50070
+9000/tcp -> 0.0.0.0:9000
 ```
 
 You can make sure all the daemons are up and running by executing the command `jps` in the console of the container.

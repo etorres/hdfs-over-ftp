@@ -1,11 +1,13 @@
 package es.eriktorr.katas.ftpserver
 
-import java.util.concurrent.atomic.AtomicBoolean
+import java.nio.charset.StandardCharsets.UTF_8
+import java.util.concurrent.atomic.AtomicReference
 
 import better.files._
 import es.eriktorr.katas.ApplicationContextLoader.loadApplicationContext
 import es.eriktorr.katas.unitspec.UnitSpec
 import es.eriktorr.katas.unitspec.clients.FtpClient
+import org.apache.commons.io.FileUtils
 
 import scala.util.{Failure, Success, Try}
 
@@ -18,18 +20,15 @@ class FtpServerSpec extends UnitSpec {
   }
 
   "ftp server" should "download files" in {
-    val result = new AtomicBoolean(false)
+    val fileContent = new AtomicReference[String]("")
     File.usingTemporaryFile() { tempFile =>
-      // TODO
-      println(s"\n\n >> HERE: ${tempFile.pathAsString}\n")
-      // TODO
-
       ftp[Boolean](_.fetchFile(s"/user/root/input/hdfs-site.xml", tempFile.pathAsString)) match {
-        case Success(isDone) => result.set(isDone)
+        case Success(isDone) =>
+          if (isDone) fileContent.set(FileUtils.readFileToString(tempFile.toJava, UTF_8))
         case Failure(_) =>
       }
     }
-    result.get() shouldBe true
+    fileContent.get() shouldBe HdfsSiteContent
   }
 
   private[this] def ftp[A](fx: FtpClient => Try[A]): Try[A] = {
@@ -45,4 +44,13 @@ class FtpServerSpec extends UnitSpec {
     ftpServer.stop()
     result
   }
+
+  private[this] lazy val HdfsSiteContent =
+    """<configuration>
+      |    <property>
+      |        <name>dfs.replication</name>
+      |        <value>1</value>
+      |    </property>
+      |</configuration>
+      |""".stripMargin
 }
