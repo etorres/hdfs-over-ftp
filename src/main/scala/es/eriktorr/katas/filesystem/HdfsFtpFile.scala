@@ -127,7 +127,14 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
 
   override def delete(): Boolean = ???
 
-  override def move(destination: FtpFile): Boolean = ???
+  override def move(destination: FtpFile): Boolean =
+    Try {
+      distributedFileSystem.rename(new Path(fileName), new Path(destination.getAbsolutePath))
+    } match {
+      case Success(moved) => moved
+      case Failure(exception) =>
+        warn(message = "move failed", exception = exception, response = false)
+    }
 
   override def listFiles(): util.List[_ <: FtpFile] = {
     val fileNames = Try {
@@ -155,6 +162,7 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
       }
     } else throw new IOException(s"File cannot be written; No write permission on: $fileName")
 
+  @SuppressWarnings(Array("org.wartremover.warts.Null", "org.wartremover.warts.Throw"))
   override def createInputStream(offset: Long): InputStream =
     if (isReadable) {
       Try {
@@ -162,16 +170,9 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
       } match {
         case Success(inputStream) => inputStream
         case Failure(exception) =>
-          warn(
-            message = "createInputStream failed",
-            exception = exception,
-            response = new ByteArrayInputStream(
-              s"Internal error while opening the file: $fileName".getBytes()
-            )
-          )
+          warn(message = "createInputStream failed", exception = exception, response = null)
       }
-    } else
-      new ByteArrayInputStream(s"File cannot be read; No read permission on: $fileName".getBytes)
+    } else throw new IOException(s"File cannot be read; No read permission on: $fileName")
 
   private[this] def withOwner[A](path: Path, filesystemCommand: Path => A): A = {
     val result = filesystemCommand.apply(path)

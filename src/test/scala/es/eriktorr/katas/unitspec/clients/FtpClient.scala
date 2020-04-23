@@ -15,10 +15,10 @@ trait FtpClient {
   def changeWorkingDirectory(path: String): Try[Boolean]
   def makeDirectory(path: String): Try[Boolean]
   def storeFile(source: String, destination: String): Try[Boolean]
+  def rename(from: String, to: String): Try[Boolean]
 
   // TODO
   // ? -> isRemovable
-  // rename -> move
   // deleteFile -> delete
   // removeDirectory -> delete
   // setModificationTime -> setLastModified
@@ -51,15 +51,19 @@ object FtpClient {
     override def storeFile(source: String, destination: String): Try[Boolean] = Try {
       ftpClient.storeFile(destination, File(source).newFileInputStream)
     }
+
+    override def rename(from: String, to: String): Try[Boolean] = Try {
+      ftpClient.rename(from, to)
+    }
   }
 
-  def apply(hostname: String, port: Int): Try[FtpClient] = {
+  def apply(username: String, password: String, hostname: String, port: Int): Try[FtpClient] = {
     val ftpClient: FTPClient = new FTPClient()
     ftpClient.connect(hostname, port)
     val replyCode = ftpClient.getReplyCode
     if (FTPReply.isPositiveCompletion(replyCode) && ftpClient.login(
-        "root",
-        "s3C4e7"
+        username,
+        password
       ))
       Success(new UnsafeFtpClient(ftpClient))
     else Failure(new IOException("Exception in connecting to FTP Server"))

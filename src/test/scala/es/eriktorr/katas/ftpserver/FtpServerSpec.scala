@@ -54,12 +54,28 @@ class FtpServerSpec extends UnitSpec {
     isStored.get() shouldBe true
   }
 
+  "ftp server" should "rename an existing file" in {
+    val fileName = s"${RandomStringUtils.randomAlphanumeric(32)}"
+    File.usingTemporaryFile() { tempFile =>
+      ftp[Boolean](_.storeFile(tempFile.pathAsString, s"/user/root/$fileName.txt"))
+    }
+
+    val isMoved =
+      ftp[Boolean](_.rename(s"/user/root/$fileName.txt", s"/user/root/${fileName}_renamed.txt"))
+    isMoved.success.value shouldBe true
+  }
+
   private[this] def ftp[A](fx: FtpClient => Try[A]): Try[A] = {
     val ftpServer = FtpServer(applicationContext)
     ftpServer.start()
 
     val result = for {
-      ftpClient <- FtpClient("localhost", applicationContext.ftpServerConfig.port)
+      ftpClient <- FtpClient(
+        username = "root",
+        password = "s3C4e7",
+        hostname = "localhost",
+        port = applicationContext.ftpServerConfig.port
+      )
       files <- fx(ftpClient)
       _ <- ftpClient.close()
     } yield files
