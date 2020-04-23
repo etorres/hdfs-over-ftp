@@ -106,7 +106,14 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
       warn(message = "getLastModified failed", exception = exception, response = 0L)
   }
 
-  override def setLastModified(time: Long): Boolean = ???
+  override def setLastModified(time: Long): Boolean =
+    Try {
+      distributedFileSystem.setTimes(new Path(fileName), time, time)
+    } match {
+      case Success(_) => true
+      case Failure(exception) =>
+        warn(message = "setLastModified failed", exception = exception, response = false)
+    }
 
   override def getSize: Long = fileStatus(fileName) match {
     case Success(fileStatus) => fileStatus.getLen

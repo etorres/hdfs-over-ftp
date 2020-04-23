@@ -18,9 +18,6 @@ trait FtpClient {
   def rename(from: String, to: String): Try[Boolean]
   def deleteFile(fileName: String): Try[Boolean]
   def removeDirectory(directory: String): Try[Boolean]
-
-  // TODO
-  // setModificationTime -> setLastModified
 }
 
 object FtpClient {
