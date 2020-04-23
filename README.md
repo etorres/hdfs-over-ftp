@@ -79,7 +79,46 @@ jenv exec sbt jacoco
 jenv exec sbt assembly
 ```
 
+```shell script
+sudo jsvc -home /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home -debug -nodetach -cp /Users/etorres/KK/commons-daemon-1.2.2/commons-daemon-1.2.2.jar:/Users/etorres/IdeaProjects/hdfs-over-ftp/target/scala-2.13/hdfs-over-ftp-assembly-1.0.jar es.eriktorr.katas.FtpServerDaemon
+```
+
+```shell script
+ftp ftp://root@localhost:2221
+```
+
+In this example, the user root copies the remote file `/user/root/input/yarn-site.xml` to her home directory:
+
+```text
+ftp ftp://root@localhost:2221                                              ✔
+Trying ::1...
+ftp: Can't connect to `::1': Connection refused
+Trying 127.0.0.1...
+Connected to localhost.
+220 Service ready for new user.
+331 User name okay, need password for root.
+Password:
+230 User logged in, proceed.
+Remote system type is UNIX.
+200 Command TYPE okay.
+
+ftp> cd /user/root/input
+250 Directory changed to /user/root/input
+
+ftp> get yarn-site.xml
+local: yarn-site.xml remote: yarn-site.xml
+229 Entering Passive Mode (|||2222|)
+150 File status okay; about to open data connection.
+100% |******************************************|  1525       17.85 KiB/s    00:00 ETA
+226 Transfer complete.
+1525 bytes received in 00:00 (17.35 KiB/s)
+
+ftp> ^D
+221 Goodbye.
+```
+
 ## Additional Resources
 
 * [Setup a Single-Node Hadoop Cluster Using Docker](https://www.alibabacloud.com/blog/setup-a-single-node-hadoop-cluster-using-docker_595278).
 * [Creating fat jars for Spark Kafka Streaming using sbt](https://community.cloudera.com/t5/Community-Articles/Creating-fat-jars-for-Spark-Kafka-Streaming-using-sbt/ta-p/246691).
+* [How To Use Apache Commons Daemon](https://weinan.io/2017/03/04/how-to-use-commons-daemon.html).
