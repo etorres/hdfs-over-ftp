@@ -45,7 +45,7 @@ class FtpServerSpec extends UnitSpec {
     val isStored = new AtomicBoolean(false)
     val fileName = s"${RandomStringUtils.randomAlphanumeric(32)}.txt"
     File.usingTemporaryFile() { tempFile =>
-      tempFile.overwrite("Hello World!")
+      tempFile.overwrite("Hello World!\n")
       ftp[Boolean](_.storeFile(tempFile.pathAsString, s"/user/root/$fileName")) match {
         case Success(result) => isStored.set(result)
         case Failure(_) =>
@@ -72,16 +72,29 @@ class FtpServerSpec extends UnitSpec {
     isDeleted.success.value shouldBe true
   }
 
+  "ftp server" should "delete a non-empty directory" in {
+    val directory = createHdfsDirectory()
+    val isDeleted = ftp[Boolean](_.removeDirectory(directory))
+    isDeleted.success.value shouldBe true
+  }
+
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   private[this] def createHdfsDirectory(): String = {
     val directory = s"/user/root/${RandomStringUtils.randomAlphanumeric(32)}"
     ftp[Boolean](_.makeDirectory(directory))
+
+    File.usingTemporaryFile() { tempFile =>
+      tempFile.overwrite("Hello World!\n")
+      ftp[Boolean](_.storeFile(tempFile.pathAsString, s"$directory/${tempFile.name}.txt"))
+    }
+
     directory
   }
 
   private[this] def createHdfsFile(): String = {
     val fileName = s"/user/root/${RandomStringUtils.randomAlphanumeric(32)}.txt"
     File.usingTemporaryFile() { tempFile =>
+      tempFile.overwrite("Hello World!\n")
       ftp[Boolean](_.storeFile(tempFile.pathAsString, fileName))
     }
     fileName
