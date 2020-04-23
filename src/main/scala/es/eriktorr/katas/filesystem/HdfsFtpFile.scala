@@ -10,6 +10,7 @@ import es.eriktorr.katas.filesystem.permissions.{
   OtherPermission,
   UserPermission
 }
+import es.eriktorr.katas.usermanagement.FtpUser
 import org.apache.ftpserver.ftplet.{FtpFile, User}
 import org.apache.hadoop.fs.{FileStatus, Path}
 import org.apache.hadoop.hdfs.DistributedFileSystem
@@ -116,7 +117,20 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
 
   override def getPhysicalFile: AnyRef = ???
 
-  override def mkdir(): Boolean = ???
+  override def mkdir(): Boolean =
+    Try {
+      val path = new Path(fileName)
+      val created = distributedFileSystem.mkdirs(path)
+      distributedFileSystem.setOwner(path, user.getName, user match {
+        case ftpUser: FtpUser => ftpUser.getMainGroup
+        case _ => "none"
+      })
+      created
+    } match {
+      case Success(created) => created
+      case Failure(exception) =>
+        warn(message = "mkdir failed", exception = exception, response = false)
+    }
 
   override def delete(): Boolean = ???
 

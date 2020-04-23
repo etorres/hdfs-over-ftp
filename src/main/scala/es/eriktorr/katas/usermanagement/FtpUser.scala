@@ -50,6 +50,11 @@ sealed case class FtpUser(
   override def getEnabled: Boolean = enabled.getOrElse(FtpUser.EnabledDefault)
 
   override def getHomeDirectory: String = s"/home/$name"
+
+  def getMainGroup: String = groups.headOption match {
+    case Some(group) => group
+    case None => "none"
+  }
 }
 
 object FtpUser {

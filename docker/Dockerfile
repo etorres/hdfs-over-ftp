@@ -1,4 +1,4 @@
-
+## https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html
 
 #FROM sequenceiq/pam:centos-6.5
 #MAINTAINER SequenceIQ
