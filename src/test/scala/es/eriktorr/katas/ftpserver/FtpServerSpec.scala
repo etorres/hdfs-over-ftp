@@ -55,14 +55,36 @@ class FtpServerSpec extends UnitSpec {
   }
 
   "ftp server" should "rename an existing file" in {
-    val fileName = s"${RandomStringUtils.randomAlphanumeric(32)}"
-    File.usingTemporaryFile() { tempFile =>
-      ftp[Boolean](_.storeFile(tempFile.pathAsString, s"/user/root/$fileName.txt"))
-    }
-
-    val isMoved =
-      ftp[Boolean](_.rename(s"/user/root/$fileName.txt", s"/user/root/${fileName}_renamed.txt"))
+    val fileName = createHdfsFile()
+    val isMoved = ftp[Boolean](_.rename(fileName, s"${fileName}_renamed"))
     isMoved.success.value shouldBe true
+  }
+
+  "ftp server" should "rename an existing directory" in {
+    val directory = createHdfsDirectory()
+    val isMoved = ftp[Boolean](_.rename(directory, s"${directory}_renamed"))
+    isMoved.success.value shouldBe true
+  }
+
+  "ftp server" should "delete an existing file" in {
+    val fileName = createHdfsFile()
+    val isDeleted = ftp[Boolean](_.deleteFile(fileName))
+    isDeleted.success.value shouldBe true
+  }
+
+  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
+  private[this] def createHdfsDirectory(): String = {
+    val directory = s"/user/root/${RandomStringUtils.randomAlphanumeric(32)}"
+    ftp[Boolean](_.makeDirectory(directory))
+    directory
+  }
+
+  private[this] def createHdfsFile(): String = {
+    val fileName = s"/user/root/${RandomStringUtils.randomAlphanumeric(32)}.txt"
+    File.usingTemporaryFile() { tempFile =>
+      ftp[Boolean](_.storeFile(tempFile.pathAsString, fileName))
+    }
+    fileName
   }
 
   private[this] def ftp[A](fx: FtpClient => Try[A]): Try[A] = {

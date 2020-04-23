@@ -16,10 +16,9 @@ trait FtpClient {
   def makeDirectory(path: String): Try[Boolean]
   def storeFile(source: String, destination: String): Try[Boolean]
   def rename(from: String, to: String): Try[Boolean]
+  def deleteFile(fileName: String): Try[Boolean]
 
   // TODO
-  // ? -> isRemovable
-  // deleteFile -> delete
   // removeDirectory -> delete
   // setModificationTime -> setLastModified
 }
@@ -54,6 +53,10 @@ object FtpClient {
 
     override def rename(from: String, to: String): Try[Boolean] = Try {
       ftpClient.rename(from, to)
+    }
+
+    override def deleteFile(fileName: String): Try[Boolean] = Try {
+      ftpClient.deleteFile(fileName)
     }
   }
 

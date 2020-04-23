@@ -84,7 +84,7 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
       permissions = fileStatus.getPermission.toString
     )
 
-  override def isRemovable: Boolean = ???
+  override def isRemovable: Boolean = isWritable
 
   override def getOwnerName: String = fileStatus(fileName) match {
     case Success(fileStatus) => fileStatus.getOwner
@@ -125,7 +125,14 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
         warn(message = "mkdir failed", exception = exception, response = false)
     }
 
-  override def delete(): Boolean = ???
+  override def delete(): Boolean =
+    Try {
+      distributedFileSystem.delete(new Path(fileName), true)
+    } match {
+      case Success(deleted) => deleted
+      case Failure(exception) =>
+        warn(message = "delete failed", exception = exception, response = false)
+    }
 
   override def move(destination: FtpFile): Boolean =
     Try {
