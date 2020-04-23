@@ -1,6 +1,6 @@
 package es.eriktorr.katas.filesystem
 
-import java.io.{ByteArrayInputStream, FileNotFoundException, InputStream, OutputStream}
+import java.io._
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
@@ -12,7 +12,7 @@ import es.eriktorr.katas.filesystem.permissions.{
 }
 import es.eriktorr.katas.usermanagement.FtpUser
 import org.apache.ftpserver.ftplet.{FtpFile, User}
-import org.apache.hadoop.fs.{FileStatus, Path}
+import org.apache.hadoop.fs.{FSDataOutputStream, FileStatus, Path}
 import org.apache.hadoop.hdfs.DistributedFileSystem
 
 import scala.annotation.tailrec
@@ -108,19 +108,17 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
 
   override def setLastModified(time: Long): Boolean = ???
 
-  override def getSize: Long = ???
+  override def getSize: Long = fileStatus(fileName) match {
+    case Success(fileStatus) => fileStatus.getLen
+    case Failure(exception) =>
+      warn(message = "getSize failed", exception = exception, response = 0L)
+  }
 
-  override def getPhysicalFile: AnyRef = ???
+  override def getPhysicalFile: AnyRef = distributedFileSystem.getUri
 
   override def mkdir(): Boolean =
     Try {
-      val path = new Path(fileName)
-      val created = distributedFileSystem.mkdirs(path)
-      distributedFileSystem.setOwner(path, user.getName, user match {
-        case ftpUser: FtpUser => ftpUser.getMainGroup
-        case _ => "none"
-      })
-      created
+      withOwner[Boolean](new Path(fileName), path => distributedFileSystem.mkdirs(path))
     } match {
       case Success(created) => created
       case Failure(exception) =>
@@ -142,7 +140,20 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
     fileNames.map(fn => HdfsFtpFile(distributedFileSystem, fn, user)).asJava
   }
 
-  override def createOutputStream(offset: Long): OutputStream = ???
+  @SuppressWarnings(Array("org.wartremover.warts.Null", "org.wartremover.warts.Throw"))
+  override def createOutputStream(offset: Long): OutputStream =
+    if (isWritable) {
+      Try {
+        withOwner[FSDataOutputStream](
+          new Path(fileName),
+          path => distributedFileSystem.create(path)
+        )
+      } match {
+        case Success(value) => value
+        case Failure(exception) =>
+          warn(message = "createOutputStream failed", exception = exception, response = null)
+      }
+    } else throw new IOException(s"File cannot be written; No write permission on: $fileName")
 
   override def createInputStream(offset: Long): InputStream =
     if (isReadable) {
@@ -161,6 +172,15 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
       }
     } else
       new ByteArrayInputStream(s"File cannot be read; No read permission on: $fileName".getBytes)
+
+  private[this] def withOwner[A](path: Path, filesystemCommand: Path => A): A = {
+    val result = filesystemCommand.apply(path)
+    distributedFileSystem.setOwner(path, user.getName, user match {
+      case ftpUser: FtpUser => ftpUser.getMainGroup
+      case _ => "none"
+    })
+    result
+  }
 
   private[this] lazy val permissionValidators =
     Seq(UserPermission, GroupPermission, OtherPermission)

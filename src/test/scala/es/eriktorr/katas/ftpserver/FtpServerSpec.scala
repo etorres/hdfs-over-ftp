@@ -1,13 +1,11 @@
 package es.eriktorr.katas.ftpserver
 
-import java.nio.charset.StandardCharsets.UTF_8
-import java.util.concurrent.atomic.AtomicReference
+import java.util.concurrent.atomic.{AtomicBoolean, AtomicReference}
 
 import better.files._
 import es.eriktorr.katas.ApplicationContextLoader.loadApplicationContext
 import es.eriktorr.katas.unitspec.UnitSpec
 import es.eriktorr.katas.unitspec.clients.FtpClient
-import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.RandomStringUtils
 
 import scala.util.{Failure, Success, Try}
@@ -20,18 +18,6 @@ class FtpServerSpec extends UnitSpec {
     files.success.value shouldBe Seq("user")
   }
 
-  "ftp server" should "download files" in {
-    val fileContent = new AtomicReference[String]("")
-    File.usingTemporaryFile() { tempFile =>
-      ftp[Boolean](_.fetchFile(s"/user/root/input/hdfs-site.xml", tempFile.pathAsString)) match {
-        case Success(isDone) =>
-          if (isDone) fileContent.set(FileUtils.readFileToString(tempFile.toJava, UTF_8))
-        case Failure(_) =>
-      }
-    }
-    fileContent.get() shouldBe HdfsSiteContent
-  }
-
   "ftp server" should "change the working directory of the user" in {
     val isChanged = ftp[Boolean](_.changeWorkingDirectory("/user/root"))
     isChanged.success.value shouldBe true
@@ -41,6 +27,31 @@ class FtpServerSpec extends UnitSpec {
     val directory = RandomStringUtils.randomAlphanumeric(32)
     val isCreated = ftp[Boolean](_.makeDirectory(s"/user/root/$directory"))
     isCreated.success.value shouldBe true
+  }
+
+  "ftp server" should "download files" in {
+    val fileContent = new AtomicReference[String]("")
+    File.usingTemporaryFile() { tempFile =>
+      ftp[Boolean](_.fetchFile(s"/user/root/input/hdfs-site.xml", tempFile.pathAsString)) match {
+        case Success(isDone) =>
+          if (isDone) fileContent.set(tempFile.contentAsString)
+        case Failure(_) =>
+      }
+    }
+    fileContent.get() shouldBe HdfsSiteContent
+  }
+
+  "ftp server" should "upload files" in {
+    val isStored = new AtomicBoolean(false)
+    val fileName = s"${RandomStringUtils.randomAlphanumeric(32)}.txt"
+    File.usingTemporaryFile() { tempFile =>
+      tempFile.overwrite("Hello World!")
+      ftp[Boolean](_.storeFile(tempFile.pathAsString, s"/user/root/$fileName")) match {
+        case Success(result) => isStored.set(result)
+        case Failure(_) =>
+      }
+    }
+    isStored.get() shouldBe true
   }
 
   private[this] def ftp[A](fx: FtpClient => Try[A]): Try[A] = {

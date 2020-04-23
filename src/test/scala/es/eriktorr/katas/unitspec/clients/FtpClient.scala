@@ -14,6 +14,14 @@ trait FtpClient {
   def fetchFile(source: String, destination: String): Try[Boolean]
   def changeWorkingDirectory(path: String): Try[Boolean]
   def makeDirectory(path: String): Try[Boolean]
+  def storeFile(source: String, destination: String): Try[Boolean]
+
+  // TODO
+  // ? -> isRemovable
+  // rename -> move
+  // deleteFile -> delete
+  // removeDirectory -> delete
+  // setModificationTime -> setLastModified
 }
 
 object FtpClient {
@@ -38,6 +46,10 @@ object FtpClient {
 
     override def makeDirectory(path: String): Try[Boolean] = Try {
       ftpClient.makeDirectory(path)
+    }
+
+    override def storeFile(source: String, destination: String): Try[Boolean] = Try {
+      ftpClient.storeFile(destination, File(source).newFileInputStream)
     }
   }
 
