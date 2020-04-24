@@ -80,7 +80,7 @@ jenv exec sbt assembly
 ```
 
 ```shell script
-sudo jsvc -home /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home -debug -nodetach -cp /Users/etorres/KK/commons-daemon-1.2.2/commons-daemon-1.2.2.jar:/Users/etorres/IdeaProjects/hdfs-over-ftp/target/scala-2.13/hdfs-over-ftp-assembly-1.0.jar es.eriktorr.katas.FtpServerDaemon
+sudo jsvc -home /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home -debug -nodetach -cp /Users/etorres/KK/commons-daemon-1.2.2/commons-daemon-1.2.2.jar:/Users/etorres/IdeaProjects/hdfs-over-ftp/target/scala-2.13/hdfs-over-ftp-assembly-1.0.jar es.eriktorr.ftp.FtpServerDaemon
 ```
 
 ```shell script

@@ -57,7 +57,7 @@ envVars in Test := (envFromFile in Test).value
 //)
 
 test in assembly := {}
-mainClass in assembly := Some("es.eriktorr.katas.FtpServerDaemon")
+mainClass in assembly := Some("es.eriktorr.ftp.FtpServerDaemon")
 
 assemblyMergeStrategy in assembly := {
   case PathList("com", "sun", xs @ _*) => MergeStrategy.last
