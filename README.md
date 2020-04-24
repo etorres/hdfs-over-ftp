@@ -77,13 +77,9 @@ jenv exec sbt jacoco
 jenv exec sbt universal:packageBin
 ```
 
-~~jenv exec sbt assembly~~
-
 ```shell script
 ./bin/hdfs-over-ftp -java-home /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home -config /Users/etorres/KK/application.conf
 ```
-
-~~sudo jsvc -home /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home -debug -nodetach -cp /Users/etorres/KK/commons-daemon-1.2.2/commons-daemon-1.2.2.jar:/Users/etorres/IdeaProjects/hdfs-over-ftp/target/scala-2.13/hdfs-over-ftp-assembly-1.0.jar es.eriktorr.ftp.FtpServerDaemon -config /Users/etorres/KK/application.conf~~
 
 ```shell script
 ftp ftp://root@localhost:2221
@@ -92,7 +88,7 @@ ftp ftp://root@localhost:2221
 In this example, the user root copies the remote file `/user/root/input/yarn-site.xml` to her home directory:
 
 ```text
-ftp ftp://root@localhost:2221                                              ✔
+$ ftp ftp://root@localhost:2221
 Trying ::1...
 ftp: Can't connect to `::1': Connection refused
 Trying 127.0.0.1...

@@ -24,6 +24,7 @@ object FtpServerApplication extends App with OptionParser {
       .getOrElse("localhost")}/${ftpServerConfig.port} and connected to ${hdfsClientConfig.uri}"
   )
 
+  // Needed because addShutdownHook returns a value that can be ignored
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   private[this] def stopOnVmExit(): Unit =
     sys.addShutdownHook {

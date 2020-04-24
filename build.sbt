@@ -5,14 +5,14 @@ version := "1.0"
 
 scalaVersion := "2.13.1"
 
-val HadoopVersion = "2.6.5"
+val HadoopVersion = "3.2.1"
 
 libraryDependencies ++= Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
   "org.slf4j" % "slf4j-log4j12" % "1.7.30",
   "com.iheart" %% "ficus" % "1.4.7",
   "org.apache.ftpserver" % "ftpserver-core" % "1.1.1",
-  "org.apache.hadoop" % "hadoop-hdfs" % HadoopVersion, // replace with "hadoop-hdfs-client" for version "3.2.1"
+  "org.apache.hadoop" % "hadoop-hdfs-client" % HadoopVersion,
   "org.apache.hadoop" % "hadoop-common" % HadoopVersion,
   "org.scalatest" %% "scalatest" % "3.1.1" % Test,
   "commons-net" % "commons-net" % "3.6" % Test,

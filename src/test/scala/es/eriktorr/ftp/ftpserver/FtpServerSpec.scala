@@ -6,7 +6,7 @@ import better.files._
 import es.eriktorr.ftp.ApplicationContextLoader.defaultApplicationContext
 import es.eriktorr.ftp.unitspec.UnitSpec
 import es.eriktorr.ftp.unitspec.clients.FtpClient
-import org.apache.commons.lang.RandomStringUtils
+import org.apache.commons.lang3.RandomStringUtils
 
 import scala.util.{Failure, Success, Try}
 
