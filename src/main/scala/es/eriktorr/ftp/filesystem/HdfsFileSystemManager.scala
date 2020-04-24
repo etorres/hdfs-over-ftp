@@ -22,7 +22,7 @@ object HdfsFileSystemManager extends LazyLogging {
   /**
    * A method to create a HDFS filesystem manager.
    *
-   * This function uses a few ideas from [[org.apache.hadoop.hdfs.client.HdfsUtils]].
+   * This function uses a few ideas from {{{org.apache.hadoop.hdfs.client.HdfsUtils}}}.
    * An example of use of this class to check the health of a Hadoop cluster is as follows:
    * {{{
    *   HdfsUtils.isHealthy(new URI("hdfs://localhost:9000"))
