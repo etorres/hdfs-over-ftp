@@ -1,5 +1,7 @@
 package es.eriktorr.ftp
 
+import java.io.File
+
 import com.typesafe.config.{Config, ConfigFactory}
 import es.eriktorr.ftp.filesystem.HdfsClientConfig
 import es.eriktorr.ftp.ftpserver.FtpServerConfig
@@ -24,14 +26,14 @@ object ApplicationContextLoader {
     ApplicationContext(ftpServerConfig, hdfsClientConfig)
   }
 
-  def loadApplicationContextFrom(resourceBasename: String): ApplicationContext = {
+  def loadApplicationContextFrom(fileName: String): ApplicationContext = {
     val baseConfig = ConfigFactory.load()
-    val config = ConfigFactory.load(resourceBasename).withFallback(baseConfig)
+    val customConfig = ConfigFactory.parseFile(new File(fileName))
 
-    // TODO ConfigParseOptions.defaults().setAllowMissing(true)
-
-    val ftpServerConfig: FtpServerConfig = config.as[FtpServerConfig](ftpServer)
-    val hdfsClientConfig: HdfsClientConfig = config.as[HdfsClientConfig](hdfsClient)
+    val ftpServerConfig: FtpServerConfig =
+      customConfig.withFallback(baseConfig).as[FtpServerConfig](ftpServer)
+    val hdfsClientConfig: HdfsClientConfig =
+      customConfig.withFallback(baseConfig).as[HdfsClientConfig](hdfsClient)
 
     ApplicationContext(ftpServerConfig, hdfsClientConfig)
   }
