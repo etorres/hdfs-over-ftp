@@ -38,6 +38,7 @@ sealed case class FtpUser(
   override def getAuthorities(clazz: Class[_ <: Authority]): util.List[_ <: Authority] =
     authorities.collect { case x if x.getClass == clazz => x }.asJava
 
+  // Needed because the Java interface will return null if the user was not authorized
   @SuppressWarnings(Array("org.wartremover.warts.Null"))
   override def authorize(request: AuthorizationRequest): AuthorizationRequest =
     authorities

@@ -6,6 +6,7 @@ import org.apache.hadoop.hdfs.DistributedFileSystem
 class HdfsFileSystemView(distributedFileSystem: DistributedFileSystem, user: User)
     extends FileSystemView
     with FileNameProcessing {
+  // Needed to update the working directory of the user
   @SuppressWarnings(Array("org.wartremover.warts.Var"))
   private[this] var workingDirectory = "/"
 

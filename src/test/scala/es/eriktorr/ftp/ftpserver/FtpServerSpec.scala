@@ -78,10 +78,10 @@ class FtpServerSpec extends UnitSpec {
     isDeleted.success.value shouldBe true
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   private[this] def createHdfsDirectory(): String = {
     val directory = s"/user/root/${RandomStringUtils.randomAlphanumeric(32)}"
-    ftp[Boolean](_.makeDirectory(directory))
+    val created: Try[Boolean] = ftp[Boolean](_.makeDirectory(directory))
+    require(created.getOrElse(false), s"The directory was not created: $directory")
 
     File.usingTemporaryFile() { tempFile =>
       tempFile.overwrite("Hello World!\n")

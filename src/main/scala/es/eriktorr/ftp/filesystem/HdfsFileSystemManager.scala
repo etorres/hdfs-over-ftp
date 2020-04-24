@@ -2,6 +2,7 @@ package es.eriktorr.ftp.filesystem
 
 import java.net.URI
 
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.ftpserver.ftplet.{FileSystemFactory, FileSystemView, User}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic
@@ -11,7 +12,7 @@ import org.apache.hadoop.hdfs.protocol.HdfsConstants.SafeModeAction
 
 trait HdfsFileSystemManager extends FileSystemFactory
 
-object HdfsFileSystemManager {
+object HdfsFileSystemManager extends LazyLogging {
   private class InnerHdfsFileSystemManager(distributedFileSystem: DistributedFileSystem)
       extends HdfsFileSystemManager {
     override def createFileSystemView(user: User): FileSystemView =
@@ -55,7 +56,9 @@ object HdfsFileSystemManager {
     new InnerHdfsFileSystemManager(dfs)
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-  private[this] def configureEnvironment(hadoopUser: String): Unit =
-    System.setProperty("HADOOP_USER_NAME", hadoopUser)
+  private[this] def configureEnvironment(hadoopUser: String): Unit = {
+    val hadoopUserNameKey = "HADOOP_USER_NAME"
+    val previousValue = System.setProperty(hadoopUserNameKey, hadoopUser)
+    logger.debug(s"Previous $hadoopUserNameKey value $previousValue superseded by $hadoopUser")
+  }
 }

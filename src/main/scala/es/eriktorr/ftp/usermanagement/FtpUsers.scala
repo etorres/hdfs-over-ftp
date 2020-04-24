@@ -10,6 +10,7 @@ import org.apache.ftpserver.usermanager.{
 
 class FtpUsers(ftpUsers: Seq[FtpUser])
     extends AbstractUserManager("admin", new SaltedPasswordEncryptor) {
+  // Needed because the Java interface will return null if the user does not exist
   @SuppressWarnings(Array("org.wartremover.warts.Null"))
   override def getUserByName(username: String): User =
     ftpUsers.find(_.name == username).orNull
@@ -22,6 +23,7 @@ class FtpUsers(ftpUsers: Seq[FtpUser])
 
   override def doesExist(username: String): Boolean = ftpUsers.exists(_.name == username)
 
+  // Needed because the Java interface will fail with an exception on authenticated requests
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   override def authenticate(authentication: Authentication): User =
     authentication match {

@@ -161,6 +161,7 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
     fileNames.map(fn => HdfsFtpFile(distributedFileSystem, fn, user)).asJava
   }
 
+  // Needed because the Java interface will fail with an exception or return null values
   @SuppressWarnings(Array("org.wartremover.warts.Null", "org.wartremover.warts.Throw"))
   override def createOutputStream(offset: Long): OutputStream =
     if (isWritable) {
@@ -176,6 +177,7 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
       }
     } else throw new IOException(s"File cannot be written; No write permission on: $fileName")
 
+  // Needed because the Java interface will fail with an exception or return null values
   @SuppressWarnings(Array("org.wartremover.warts.Null", "org.wartremover.warts.Throw"))
   override def createInputStream(offset: Long): InputStream =
     if (isReadable) {
