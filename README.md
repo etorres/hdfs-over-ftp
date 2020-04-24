@@ -18,7 +18,7 @@ docker run -p 50070:50070 -p 50010:50010 -p 8030:8030 -it sequenceiq/hadoop-dock
 
 __WARNING__
 
-Hadoop name node will use the container hostname to build a download URL. This URL will include an IP address that is relative to the container (e.g `172.17.0.2`). Clients will download the file from the data node pointed by this URL. Therefore, you will need to add an alias to the container in your development environment:
+Hadoop name node will use the container hostname to build a download URL. This URL will include an IP address that is relative to the container (e.g `172.17.0.2`). Clients will download the file from the data node pointed by this URL. Therefore, you will need to add an alias to the container in your development environment. You can use the following command to create such an alias in macOS:
 
 ```shell script
 sudo ifconfig lo0 alias 172.17.0.2
