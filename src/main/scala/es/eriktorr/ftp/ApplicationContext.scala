@@ -12,11 +12,26 @@ final case class ApplicationContext(
 )
 
 object ApplicationContextLoader {
-  def loadApplicationContext: ApplicationContext = {
+  private[this] val ftpServer = "ftpServer"
+  private[this] val hdfsClient = "hdfsClient"
+
+  def defaultApplicationContext: ApplicationContext = {
     val config: Config = ConfigFactory.load()
 
-    val ftpServerConfig: FtpServerConfig = config.as[FtpServerConfig]("ftpServer")
-    val hdfsClientConfig: HdfsClientConfig = config.as[HdfsClientConfig]("hdfsClient")
+    val ftpServerConfig: FtpServerConfig = config.as[FtpServerConfig](ftpServer)
+    val hdfsClientConfig: HdfsClientConfig = config.as[HdfsClientConfig](hdfsClient)
+
+    ApplicationContext(ftpServerConfig, hdfsClientConfig)
+  }
+
+  def loadApplicationContextFrom(resourceBasename: String): ApplicationContext = {
+    val baseConfig = ConfigFactory.load()
+    val config = ConfigFactory.load(resourceBasename).withFallback(baseConfig)
+
+    // TODO ConfigParseOptions.defaults().setAllowMissing(true)
+
+    val ftpServerConfig: FtpServerConfig = config.as[FtpServerConfig](ftpServer)
+    val hdfsClientConfig: HdfsClientConfig = config.as[HdfsClientConfig](hdfsClient)
 
     ApplicationContext(ftpServerConfig, hdfsClientConfig)
   }

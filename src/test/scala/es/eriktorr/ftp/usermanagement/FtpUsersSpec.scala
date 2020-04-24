@@ -1,13 +1,13 @@
 package es.eriktorr.ftp.usermanagement
 
-import es.eriktorr.ftp.ApplicationContextLoader.loadApplicationContext
+import es.eriktorr.ftp.ApplicationContextLoader.defaultApplicationContext
 import es.eriktorr.ftp.unitspec.UnitSpec
 import es.eriktorr.ftp.unitspec.data.DataProvider
 import org.apache.ftpserver.ftplet.AuthenticationFailedException
 import org.apache.ftpserver.usermanager.{AnonymousAuthentication, UsernamePasswordAuthentication}
 
 class FtpUsersSpec extends UnitSpec with DataProvider {
-  private[this] val applicationContext = loadApplicationContext
+  private[this] val applicationContext = defaultApplicationContext
   private[this] val ftpUsers = new FtpUsers(applicationContext.ftpServerConfig.ftpUsers)
 
   "ftp users" should "find a user by her name" in {

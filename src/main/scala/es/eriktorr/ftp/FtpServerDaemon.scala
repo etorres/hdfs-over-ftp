@@ -13,7 +13,7 @@ class FtpServerDaemon extends Daemon with OptionParser {
     options.set(optionsFrom(daemonContext.getArguments))
 
   override def start(): Unit = {
-    val applicationContext = ApplicationContextLoader.loadApplicationContext
+    val applicationContext = ApplicationContextLoader.defaultApplicationContext
 
     val ftpServer = FtpServer(applicationContext)
     ftpServer.start()

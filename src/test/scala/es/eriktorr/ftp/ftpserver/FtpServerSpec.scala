@@ -3,7 +3,7 @@ package es.eriktorr.ftp.ftpserver
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicReference}
 
 import better.files._
-import es.eriktorr.ftp.ApplicationContextLoader.loadApplicationContext
+import es.eriktorr.ftp.ApplicationContextLoader.defaultApplicationContext
 import es.eriktorr.ftp.unitspec.UnitSpec
 import es.eriktorr.ftp.unitspec.clients.FtpClient
 import org.apache.commons.lang.RandomStringUtils
@@ -11,7 +11,7 @@ import org.apache.commons.lang.RandomStringUtils
 import scala.util.{Failure, Success, Try}
 
 class FtpServerSpec extends UnitSpec {
-  private[this] val applicationContext = loadApplicationContext
+  private[this] val applicationContext = defaultApplicationContext
 
   "ftp server" should "list files in home directory" in {
     val files = ftp[Seq[String]](_.listFiles(""))
