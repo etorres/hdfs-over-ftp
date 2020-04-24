@@ -12,7 +12,9 @@ object FtpServerApplication extends App with OptionParser {
   }
 
   val ftpServer = FtpServer(applicationContext)
+
   ftpServer.start()
+  stopOnVmExit()
 
   val ftpServerConfig = applicationContext.ftpServerConfig
   val hdfsClientConfig = applicationContext.hdfsClientConfig
@@ -22,5 +24,10 @@ object FtpServerApplication extends App with OptionParser {
       .getOrElse("localhost")}/${ftpServerConfig.port} and connected to ${hdfsClientConfig.uri}"
   )
 
-  // TODO: ftpServer.stop()
+  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
+  private[this] def stopOnVmExit(): Unit =
+    sys.addShutdownHook {
+      ftpServer.stop()
+      logger.info("Goodbye.")
+    }
 }
