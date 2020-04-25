@@ -4,6 +4,14 @@ This is rewrite of the project [hdfs-over-ftp](https://github.com/iponweb/hdfs-o
 
 ## Configuring your environment
 
+```shell script
+docker build  -t ertorser/hadoop-single-node-cluster:2.6.0 .
+```
+
+```shell script
+docker run -ti ertorser/hadoop-single-node-cluster:2.6.0 /bin/bash
+```
+
 Pull the Hadoop docker image:
 
 ```shell script
@@ -120,3 +128,4 @@ ftp> ^D
 * [Setup a Single-Node Hadoop Cluster Using Docker](https://www.alibabacloud.com/blog/setup-a-single-node-hadoop-cluster-using-docker_595278).
 * [Creating fat jars for Spark Kafka Streaming using sbt](https://community.cloudera.com/t5/Community-Articles/Creating-fat-jars-for-Spark-Kafka-Streaming-using-sbt/ta-p/246691).
 * [How To Use Apache Commons Daemon](https://weinan.io/2017/03/04/how-to-use-commons-daemon.html).
+* [Hadoop: Setting up a Single Node Cluster](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html).
