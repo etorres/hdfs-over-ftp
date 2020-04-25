@@ -4,14 +4,6 @@ This is rewrite of the project [hdfs-over-ftp](https://github.com/iponweb/hdfs-o
 
 ## Configuring your environment
 
-```shell script
-docker build  -t ertorser/hadoop-single-node-cluster:2.6.0 .
-```
-
-```shell script
-docker run -ti ertorser/hadoop-single-node-cluster:2.6.0 /bin/bash
-```
-
 Pull the Hadoop docker image:
 
 ```shell script
@@ -21,7 +13,7 @@ docker pull sequenceiq/hadoop-docker:2.6.0
 You can check the image by starting a container locally in your laptop:
 
 ```shell script
-docker run -p 50070:50070 -p 50010:50010 -p 8030:8030 -it sequenceiq/hadoop-docker:2.6.0 /etc/bootstrap.sh -bash
+docker run -p 50070:50070 -p 50010:50010 -p 9000:9000 -it sequenceiq/hadoop-docker:2.6.0 /etc/bootstrap.sh -bash
 ```
 
 __WARNING__
@@ -32,19 +24,19 @@ Hadoop name node will use the container hostname to build a download URL. This U
 sudo ifconfig lo0 alias 172.17.0.2
 ```
 
-You can always remove this alias with the following command:
+You can always remove this alias later with the following command:
 
 ```shell script
 sudo ifconfig lo0 -alias 172.17.0.2
 ```
 
-You can find out all the ports mapped with the docker port command (you can find the container id as usual with `docker ps`):
+You can find out all the ports mapped with the docker port command (you can find the container _id_ with `docker ps`):
 
 ```text
 ~ docker port 289c381868ed
+9000/tcp -> 0.0.0.0:9000
 50010/tcp -> 0.0.0.0:50010
 50070/tcp -> 0.0.0.0:50070
-9000/tcp -> 0.0.0.0:9000
 ```
 
 You can make sure all the daemons are up and running by executing the command `jps` in the console of the container.
@@ -57,7 +49,7 @@ Useful commands:
 /usr/local/hadoop/bin/hdfs getconf -confKey fs.defaultFS
 ```
 
-## Build and test this project with specific Java version
+## Build and test this project with specific Java version (using [jenv](https://www.jenv.be/))
 
 ```shell script
 jenv exec sbt clean test
@@ -126,6 +118,19 @@ ftp> ^D
 ## Additional Resources
 
 * [Setup a Single-Node Hadoop Cluster Using Docker](https://www.alibabacloud.com/blog/setup-a-single-node-hadoop-cluster-using-docker_595278).
-* [Creating fat jars for Spark Kafka Streaming using sbt](https://community.cloudera.com/t5/Community-Articles/Creating-fat-jars-for-Spark-Kafka-Streaming-using-sbt/ta-p/246691).
-* [How To Use Apache Commons Daemon](https://weinan.io/2017/03/04/how-to-use-commons-daemon.html).
 * [Hadoop: Setting up a Single Node Cluster](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html).
+
+### Configure Java 11 in your work directory
+
+```text
+~ jenv versions
+  system
+* 1.8 (set by /home/username/.jenv/version)
+  1.8.0.242
+  11.0
+  11.0.6
+```
+
+```shell script
+jenv local 11.0
+```
