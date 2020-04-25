@@ -78,7 +78,7 @@ jenv exec sbt universal:packageBin
 ```
 
 ```shell script
-./bin/hdfs-over-ftp -java-home /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home -config /Users/etorres/KK/application.conf
+./bin/hdfs-over-ftp -J-Xms4G -J-Xmx4G -java-home /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home -config /Users/etorres/KK/application.conf
 ```
 
 ```shell script
