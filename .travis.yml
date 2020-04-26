@@ -10,11 +10,12 @@ services:
   - docker
 
 before_install:
-  - sudo apt-get -y install iproute2
+  - sudo apt-get -y install net-tools
   - docker pull sequenceiq/hadoop-docker:2.6.0
   - docker run -d -p 50070:50070 -p 50010:50010 -p 9000:9000 sequenceiq/hadoop-docker:2.6.0 /etc/bootstrap.sh -d
-  - DOCKER_ID_HADOOP=`docker ps -q -f "ancestor=sequenceiq/hadoop-docker:2.6.0"` ; DOCKER_IP_HADOOP=`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DOCKER_ID_HADOOP` ; ip route add $DOCKER_IP_HADOOP dev lo
+  - DOCKER_ID_HADOOP=`docker ps -q -f "ancestor=sequenceiq/hadoop-docker:2.6.0"` ; DOCKER_IP_HADOOP=`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DOCKER_ID_HADOOP` ; sudo ifconfig lo alias $DOCKER_IP_HADOOP
 
+# sudo apt-get -y install iproute2
 # ip route add 172.17.0.100/32 via 127.0.0.1 dev lo
 
 addons:

@@ -1,5 +1,7 @@
 # HDFS over FTP
 
+[![Build Status](https://travis-ci.org/etorres/hdfs-over-ftp.svg?branch=master)](https://travis-ci.org/etorres/hdfs-over-ftp)
+
 This is rewrite of the project [hdfs-over-ftp](https://github.com/iponweb/hdfs-over-ftp). I found in this project an opportunity to gain experience and developing my skills in Java-to-Scala migration. However, I reduced the scope excluding some advanced features like modifying user accounts (add, delete FTP users), also only non-SSL is supported.
 
 ## Configuring your environment
