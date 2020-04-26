@@ -12,9 +12,10 @@ services:
 before_install:
   - sudo apt-get -y install iproute2
   - docker pull sequenceiq/hadoop-docker:2.6.0
-  - docker run -d -p 50070:50070 -p 50010:50010 -p 9000:9000 sequenceiq/hadoop-docker:2.6.0 /etc/bootstrap.sh -d
+  - docker run -d -p 50070:50070 -p 50010:50010 -p 9000:9000 -p 8040:8040 sequenceiq/hadoop-docker:2.6.0 /etc/bootstrap.sh -d
   - DOCKER_ID_HADOOP=`docker ps -q -f "ancestor=sequenceiq/hadoop-docker:2.6.0"` ; DOCKER_IP_HADOOP=`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DOCKER_ID_HADOOP` ; sudo ip addr add ${DOCKER_IP_HADOOP}/32 dev lo ; ping -c 3 $DOCKER_IP_HADOOP
-  - timeout 120 bash -c 'until printf "" 2>>/dev/null >>/dev/tcp/$0/$1; do sleep 1; done' localhost 50010
+  - timeout 120 bash -c 'until printf "" 2>>/dev/null >>/dev/tcp/$0/$1; do sleep 1; done' localhost 8040
+  - sleep 3m
 
 addons:
   apt:
