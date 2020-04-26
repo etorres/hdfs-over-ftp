@@ -46,15 +46,7 @@ wartremoverWarnings ++= Warts.unsafe
 Test / envFileName := ".env_test"
 envVars in Test := (envFromFile in Test).value
 
-jacocoReportSettings := JacocoReportSettings().withThresholds(
-  JacocoThresholds(
-    instruction = 80,
-    method = 100,
-    branch = 100,
-    complexity = 100,
-    line = 90,
-    clazz = 100
-  )
-)
+coverageMinimum := 80
+coverageFailOnMinimum := true
 
 enablePlugins(JavaServerAppPackaging)

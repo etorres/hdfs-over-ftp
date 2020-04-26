@@ -57,6 +57,18 @@ Useful commands:
 jenv exec sbt clean test
 ```
 
+### Run the tests with enabled coverage
+
+```shell script
+jenv exec sbt clean coverage test
+```
+
+### To generate the coverage reports run
+
+```shell script
+jenv exec sbt coverageReport
+```
+
 ## List dependencies of this project
 
 ```shell script
@@ -65,12 +77,6 @@ jenv exec sbt dependencyTree
 
 ```shell script
 jenv exec sbt dependencyBrowseGraph
-```
-
-## Code coverage
-
-```shell script
-jenv exec sbt jacoco
 ```
 
 ## Distribution
