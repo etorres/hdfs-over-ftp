@@ -16,7 +16,7 @@ class ApplicationContextSpec extends UnitSpec with DataProvider {
     )
   }
 
-  "Application context" should "be loaded from file" in {
+  it should "be loaded from file" in {
     val applicationContextRef = new AtomicReference[ApplicationContext]()
 
     File.usingTemporaryFile() { tempFile =>

@@ -30,7 +30,7 @@ class FtpUserSpec extends AnyFlatSpec with Matchers with TableDrivenPropertyChec
       enabled = None
     )
 
-  "users" should "have least authority" in {
+  "A user" should "have least authority" in {
     val users = Table(
       ("user", "authorities"),
       (
@@ -55,7 +55,7 @@ class FtpUserSpec extends AnyFlatSpec with Matchers with TableDrivenPropertyChec
     )
   }
 
-  "user" should "provide access to attributes via getter methods" in {
+  it should "provide access to its attributes via getter methods" in {
     val user = new BaseUser()
     user.setName("user")
     user.setPassword(Password)

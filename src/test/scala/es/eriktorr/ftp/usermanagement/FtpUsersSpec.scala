@@ -10,32 +10,32 @@ class FtpUsersSpec extends UnitSpec with DataProvider {
   private[this] val applicationContext = defaultApplicationContext
   private[this] val ftpUsers = new FtpUsers(applicationContext.ftpServerConfig.ftpUsers)
 
-  "ftp users" should "find a user by her name" in {
+  "Ftp users" should "find a user by her name" in {
     ftpUsers.getUserByName("root") shouldBe RootFtpUser
   }
 
-  "ftp users" should "list all usernames" in {
+  it should "list all usernames" in {
     ftpUsers.getAllUserNames shouldBe Array("root", "anonymous")
   }
 
-  "ftp users" should "identify a nonexistent user" in {
+  it should "identify a nonexistent user" in {
     ftpUsers.doesExist("admin") shouldBe false
   }
 
-  "ftp users" should "identify a existent user" in {
+  it should "identify a existent user" in {
     ftpUsers.doesExist("root") shouldBe true
   }
 
-  "ftp users" should "authenticate a user by its username and password" in {
+  it should "authenticate a user by its username and password" in {
     ftpUsers.authenticate(new UsernamePasswordAuthentication("root", "s3C4e7")) shouldBe
       RootFtpUser
   }
 
-  "ftp users" should "authenticate an anonymous access" in {
+  it should "authenticate an anonymous access" in {
     ftpUsers.authenticate(new AnonymousAuthentication()) shouldBe AnonymousFtpUser
   }
 
-  "ftp users" should "reject invalid username and password" in {
+  it should "reject invalid username and password" in {
     the[AuthenticationFailedException] thrownBy ftpUsers.authenticate(
       new UsernamePasswordAuthentication("root", "fake")
     ) should have message "Authentication failed"

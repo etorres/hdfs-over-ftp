@@ -13,23 +13,23 @@ import scala.util.{Failure, Success, Try}
 class FtpServerSpec extends UnitSpec {
   private[this] val applicationContext = defaultApplicationContext
 
-  "ftp server" should "list files in home directory" in {
+  "Ftp server" should "list files in home directory" in {
     val files = ftp[Seq[String]](_.listFiles(""))
     files.success.value shouldBe Seq("user")
   }
 
-  "ftp server" should "change the working directory of the user" in {
+  it should "change the working directory of the user" in {
     val isChanged = ftp[Boolean](_.changeWorkingDirectory("/user/root"))
     isChanged.success.value shouldBe true
   }
 
-  "ftp server" should "create a new directory" in {
+  it should "create a new directory" in {
     val directory = RandomStringUtils.randomAlphanumeric(32)
     val isCreated = ftp[Boolean](_.makeDirectory(s"/user/root/$directory"))
     isCreated.success.value shouldBe true
   }
 
-  "ftp server" should "download files" in {
+  it should "download files" in {
     val fileContent = new AtomicReference[String]("")
     File.usingTemporaryFile() { tempFile =>
       ftp[Boolean](_.fetchFile(s"/user/root/input/hdfs-site.xml", tempFile.pathAsString)) match {
@@ -41,7 +41,7 @@ class FtpServerSpec extends UnitSpec {
     fileContent.get() shouldBe HdfsSiteContent
   }
 
-  "ftp server" should "upload files" in {
+  it should "upload files" in {
     val isStored = new AtomicBoolean(false)
     val fileName = s"${RandomStringUtils.randomAlphanumeric(32)}.txt"
     File.usingTemporaryFile() { tempFile =>
@@ -54,25 +54,25 @@ class FtpServerSpec extends UnitSpec {
     isStored.get() shouldBe true
   }
 
-  "ftp server" should "rename an existing file" in {
+  it should "rename an existing file" in {
     val fileName = createHdfsFile()
     val isMoved = ftp[Boolean](_.rename(fileName, s"${fileName}_renamed"))
     isMoved.success.value shouldBe true
   }
 
-  "ftp server" should "rename an existing directory" in {
+  it should "rename an existing directory" in {
     val directory = createHdfsDirectory()
     val isMoved = ftp[Boolean](_.rename(directory, s"${directory}_renamed"))
     isMoved.success.value shouldBe true
   }
 
-  "ftp server" should "delete an existing file" in {
+  it should "delete an existing file" in {
     val fileName = createHdfsFile()
     val isDeleted = ftp[Boolean](_.deleteFile(fileName))
     isDeleted.success.value shouldBe true
   }
 
-  "ftp server" should "delete a non-empty directory" in {
+  it should "delete a non-empty directory" in {
     val directory = createHdfsDirectory()
     val isDeleted = ftp[Boolean](_.removeDirectory(directory))
     isDeleted.success.value shouldBe true
