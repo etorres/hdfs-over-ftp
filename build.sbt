@@ -47,7 +47,8 @@ wartremoverWarnings ++= Warts.unsafe
 Test / envFileName := ".env_test"
 envVars in Test := (envFromFile in Test).value
 
-coverageMinimum := 80
+coverageMinimum := 78
 coverageFailOnMinimum := true
+coverageEnabled := true
 
 enablePlugins(JavaServerAppPackaging)
