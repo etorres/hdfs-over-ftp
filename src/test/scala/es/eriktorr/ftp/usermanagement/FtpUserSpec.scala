@@ -1,19 +1,17 @@
 package es.eriktorr.ftp.usermanagement
 
+import es.eriktorr.ftp.unitspec.ParameterizedUnitSpec
+import es.eriktorr.ftp.unitspec.matchers.CustomMatchers._
 import es.eriktorr.ftp.usermanagement.authorization.WriteAuthorizationMaker.WritePermissionDefault
 import es.eriktorr.ftp.usermanagement.authorization.{
   ConcurrentLoginAuthority,
   TransferRateAuthority
 }
-import es.eriktorr.ftp.unitspec.matchers.CustomMatchers._
 import org.apache.ftpserver.usermanager.impl.{BaseUser, WritePermission}
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.prop.TableDrivenPropertyChecks
 
 import scala.jdk.CollectionConverters._
 
-class FtpUserSpec extends AnyFlatSpec with Matchers with TableDrivenPropertyChecks {
+class FtpUserSpec extends ParameterizedUnitSpec {
   private[this] val Password = "123"
 
   private[this] def aFtpUser(name: String, writePermission: Boolean) =
