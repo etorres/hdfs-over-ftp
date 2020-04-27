@@ -24,7 +24,10 @@ jdk:
   - openjdk11
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION clean test universal:packageBin
+  - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport universal:packageBin && sbt coverageAggregate
+
+after_success:
+  - sbt coveralls
 
 before_cache:
   - rm -fv $HOME/.ivy2/.sbt.ivy.lock
