@@ -19,6 +19,7 @@ class FtpUserSpec extends ParameterizedUnitSpec {
       name = name,
       password = Password,
       groups = Seq.empty,
+      homeDirectory = None,
       maxLoginPerIp = None,
       maxLoginNumber = None,
       maxIdleTime = None,

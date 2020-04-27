@@ -3,14 +3,20 @@ package es.eriktorr.ftp.filesystem
 import org.apache.ftpserver.ftplet.{FileSystemView, FtpFile, User}
 import org.apache.hadoop.hdfs.DistributedFileSystem
 
-class HdfsFileSystemView(distributedFileSystem: DistributedFileSystem, user: User)
-    extends FileSystemView
+// Needed to update the working directory of the user
+@SuppressWarnings(Array("org.wartremover.warts.Var"))
+class HdfsFileSystemView(
+  distributedFileSystem: DistributedFileSystem,
+  user: User,
+  private[this] var workingDirectory: String
+) extends FileSystemView
     with FileNameProcessing {
-  // Needed to update the working directory of the user
-  @SuppressWarnings(Array("org.wartremover.warts.Var"))
-  private[this] var workingDirectory = "/"
+  def this(distributedFileSystem: DistributedFileSystem, user: User) {
+    this(distributedFileSystem, user, "/")
+  }
 
-  override def getHomeDirectory: FtpFile = HdfsFtpFile(distributedFileSystem, "/", user)
+  override def getHomeDirectory: FtpFile =
+    HdfsFtpFile(distributedFileSystem, "/", user)
 
   override def getWorkingDirectory: FtpFile =
     HdfsFtpFile(distributedFileSystem, workingDirectory, user)

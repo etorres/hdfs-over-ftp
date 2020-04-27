@@ -15,6 +15,7 @@ sealed case class FtpUser(
   name: String,
   password: String,
   groups: Seq[String],
+  homeDirectory: Option[String],
   maxLoginPerIp: Option[Int],
   maxLoginNumber: Option[Int],
   maxIdleTime: Option[Int],
@@ -50,7 +51,7 @@ sealed case class FtpUser(
 
   override def getEnabled: Boolean = enabled.getOrElse(FtpUser.EnabledDefault)
 
-  override def getHomeDirectory: String = s"/home/$name"
+  override def getHomeDirectory: String = homeDirectory.getOrElse(s"/home/$name")
 
   def getMainGroup: String = groups.headOption match {
     case Some(group) => group

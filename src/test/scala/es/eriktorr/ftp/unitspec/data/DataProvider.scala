@@ -21,6 +21,7 @@ trait DataProvider {
       name = name,
       password = password,
       groups = groups,
+      homeDirectory = None,
       maxLoginPerIp = Some(maxLoginPerIp),
       maxLoginNumber = Some(MaxLoginNumberDefault),
       maxIdleTime = Some(MaxIdleTimeDefault),
