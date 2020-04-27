@@ -2,14 +2,7 @@ package es.eriktorr.ftp.unitspec.matchers
 
 import es.eriktorr.ftp.usermanagement.FtpUser
 import org.apache.ftpserver.ftplet.User
-import org.apache.ftpserver.usermanager.impl.{
-  ConcurrentLoginPermission,
-  ConcurrentLoginRequest,
-  TransferRatePermission,
-  TransferRateRequest,
-  WritePermission,
-  WriteRequest
-}
+import org.apache.ftpserver.usermanager.impl._
 
 import scala.util.{Failure, Success, Try}
 //import org.apache.ftpserver.usermanager.impl._

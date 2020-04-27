@@ -3,11 +3,11 @@ package es.eriktorr.ftp.filesystem
 import org.apache.ftpserver.ftplet.{FileSystemView, FtpFile, User}
 import org.apache.hadoop.hdfs.DistributedFileSystem
 
-// Needed to update the working directory of the user
-@SuppressWarnings(Array("org.wartremover.warts.Var"))
 class HdfsFileSystemView(
   distributedFileSystem: DistributedFileSystem,
   user: User,
+  // Needed to update the user's working directory
+  @SuppressWarnings(Array("org.wartremover.warts.Var"))
   private[this] var workingDirectory: String
 ) extends FileSystemView
     with FileNameProcessing {
