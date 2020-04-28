@@ -4,6 +4,7 @@ import org.apache.commons.io.FilenameUtils.{
   concat,
   getFullPathNoEndSeparator,
   getName,
+  getPrefix,
   normalizeNoEndSeparator,
   separatorsToUnix
 }
@@ -15,4 +16,11 @@ trait FileNameProcessing {
   def concatenate(basePath: String, fileNameToAdd: String): String =
     normalized(concat(basePath, separatorsToUnix(fileNameToAdd)))
   def pathToParent(fileName: String): String = getFullPathNoEndSeparator(fileName)
+  def concatenateIfRelative(basePath: String, fileNameToAdd: String) = {
+    val unixDir = separatorsToUnix(fileNameToAdd)
+    getPrefix(unixDir) match {
+      case "/" => normalized(fileNameToAdd)
+      case _ => concatenate(basePath, fileNameToAdd)
+    }
+  }
 }
