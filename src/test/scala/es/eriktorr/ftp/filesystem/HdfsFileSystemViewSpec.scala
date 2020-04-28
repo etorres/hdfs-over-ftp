@@ -7,11 +7,8 @@ import org.apache.hadoop.fs.{FileStatus, Path}
 import org.apache.hadoop.hdfs.DistributedFileSystem
 
 class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
-  private[this] val hdfsFileSystemView =
-    new HdfsFileSystemView(DistributedFileSystemFake, AnonymousFtpUser)
-
   "HDFS filesystem" should "get home directory" in {
-    hdfsFileSystemView.getHomeDirectory shouldBe HdfsFtpFile(
+    anonymousHdfsFileSystemView().getHomeDirectory shouldBe HdfsFtpFile(
       DistributedFileSystemFake,
       "/user/ftp/pub",
       AnonymousFtpUser
@@ -19,22 +16,41 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
   }
 
   it should "get working directory" in {
-    hdfsFileSystemView.getWorkingDirectory shouldBe HdfsFtpFile(
+    anonymousHdfsFileSystemView().getWorkingDirectory shouldBe HdfsFtpFile(
       DistributedFileSystemFake,
       "/user/ftp/pub",
       AnonymousFtpUser
     )
   }
 
-  it should "change working directory" in {
-    val changed = hdfsFileSystemView.changeWorkingDirectory("/user/root")
+  it should "change working directory to absolute path" in {
+    val absolutePath = "/user/root/input"
+    val hdfsFileSystemView = anonymousHdfsFileSystemView()
+    val changed = hdfsFileSystemView.changeWorkingDirectory(absolutePath)
     val workingDirectory = hdfsFileSystemView.getWorkingDirectory
     (changed, workingDirectory) shouldBe (
       (
         true,
         HdfsFtpFile(
           DistributedFileSystemFake,
-          "/user/root",
+          absolutePath,
+          AnonymousFtpUser
+        )
+      )
+    )
+  }
+
+  it should "change working directory to relative path" in {
+    val relativePath = "input"
+    val hdfsFileSystemView = anonymousHdfsFileSystemView()
+    val changed = hdfsFileSystemView.changeWorkingDirectory(relativePath)
+    val workingDirectory = hdfsFileSystemView.getWorkingDirectory
+    (changed, workingDirectory) shouldBe (
+      (
+        true,
+        HdfsFtpFile(
+          DistributedFileSystemFake,
+          s"/user/ftp/pub/$relativePath",
           AnonymousFtpUser
         )
       )
@@ -42,7 +58,7 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
   }
 
   it should "get a file" in {
-    hdfsFileSystemView.getFile("/user/root") shouldBe HdfsFtpFile(
+    anonymousHdfsFileSystemView().getFile("/user/root") shouldBe HdfsFtpFile(
       DistributedFileSystemFake,
       "/user/root",
       AnonymousFtpUser
@@ -50,8 +66,11 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
   }
 
   it should "check whether file is random accessible" in {
-    hdfsFileSystemView.isRandomAccessible shouldBe true
+    anonymousHdfsFileSystemView().isRandomAccessible shouldBe true
   }
+
+  private[this] def anonymousHdfsFileSystemView() =
+    new HdfsFileSystemView(DistributedFileSystemFake, AnonymousFtpUser)
 
   object DistributedFileSystemFake extends DistributedFileSystem {
     override def getFileStatus(f: Path): FileStatus = new FileStatus(

@@ -1,5 +1,6 @@
 package es.eriktorr.ftp.filesystem
 
+import org.apache.commons.io.FilenameUtils
 import org.apache.ftpserver.ftplet.{FileSystemView, FtpFile, User}
 import org.apache.hadoop.hdfs.DistributedFileSystem
 
@@ -22,7 +23,11 @@ class HdfsFileSystemView(
     HdfsFtpFile(distributedFileSystem, workingDirectory, user)
 
   override def changeWorkingDirectory(dir: String): Boolean = {
-    val candidateWorkingDirectory = concatenate("/", dir)
+    val unixDir = FilenameUtils.separatorsToUnix(dir)
+    val candidateWorkingDirectory = FilenameUtils.getPrefix(unixDir) match {
+      case "/" => concatenate("/", dir)
+      case _ => concatenate(user.getHomeDirectory, dir)
+    }
     val file = HdfsFtpFile(distributedFileSystem, candidateWorkingDirectory, user)
     if (file.isDirectory && file.isReadable) {
       workingDirectory = candidateWorkingDirectory
