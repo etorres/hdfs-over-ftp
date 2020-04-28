@@ -13,7 +13,7 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
   "HDFS filesystem" should "get home directory" in {
     hdfsFileSystemView.getHomeDirectory shouldBe HdfsFtpFile(
       DistributedFileSystemFake,
-      "/",
+      "/user/ftp/pub",
       AnonymousFtpUser
     )
   }
@@ -21,7 +21,7 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
   it should "get working directory" in {
     hdfsFileSystemView.getWorkingDirectory shouldBe HdfsFtpFile(
       DistributedFileSystemFake,
-      "/",
+      "/user/ftp/pub",
       AnonymousFtpUser
     )
   }

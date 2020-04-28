@@ -12,11 +12,11 @@ class HdfsFileSystemView(
 ) extends FileSystemView
     with FileNameProcessing {
   def this(distributedFileSystem: DistributedFileSystem, user: User) {
-    this(distributedFileSystem, user, "/")
+    this(distributedFileSystem, user, user.getHomeDirectory)
   }
 
   override def getHomeDirectory: FtpFile =
-    HdfsFtpFile(distributedFileSystem, "/", user)
+    HdfsFtpFile(distributedFileSystem, user.getHomeDirectory, user)
 
   override def getWorkingDirectory: FtpFile =
     HdfsFtpFile(distributedFileSystem, workingDirectory, user)

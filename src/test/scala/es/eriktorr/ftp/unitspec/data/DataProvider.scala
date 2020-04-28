@@ -13,6 +13,7 @@ trait DataProvider {
     name: String,
     password: String,
     groups: Seq[String],
+    homeDirectory: Option[String],
     maxLoginPerIp: Int,
     writePermission: Boolean,
     enabled: Boolean
@@ -21,7 +22,7 @@ trait DataProvider {
       name = name,
       password = password,
       groups = groups,
-      homeDirectory = None,
+      homeDirectory = homeDirectory,
       maxLoginPerIp = Some(maxLoginPerIp),
       maxLoginNumber = Some(MaxLoginNumberDefault),
       maxIdleTime = Some(MaxIdleTimeDefault),
@@ -35,6 +36,7 @@ trait DataProvider {
     name = "root",
     password = "62370436:28142C8301BFAC1959EAEA30991958AD",
     groups = Seq("supergroup"),
+    homeDirectory = None,
     maxLoginPerIp = MaxLoginPerIpDefault,
     writePermission = true,
     enabled = EnabledDefault
@@ -44,6 +46,7 @@ trait DataProvider {
     name = "anonymous",
     password = "",
     groups = Seq.empty,
+    homeDirectory = Some("/user/ftp/pub"),
     maxLoginPerIp = 1,
     writePermission = WritePermissionDefault,
     enabled = false

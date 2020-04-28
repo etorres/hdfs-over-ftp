@@ -56,7 +56,7 @@ class FtpUserSpec extends ParameterizedUnitSpec {
 
   it should "provide access to its attributes via getter methods" in {
     val user = new BaseUser()
-    user.setName("user")
+    user.setName("guest")
     user.setPassword(Password)
     user.setAuthorities(
       Seq(
@@ -65,8 +65,8 @@ class FtpUserSpec extends ParameterizedUnitSpec {
       ).asJava
     )
     user.setMaxIdleTime(300)
-    user.setHomeDirectory("/home/user")
-    aFtpUser(name = "user", writePermission = WritePermissionDefault) should
+    user.setHomeDirectory("/user/guest")
+    aFtpUser(name = "guest", writePermission = WritePermissionDefault) should
       haveMatchingAttributesWith(user)
   }
 }
