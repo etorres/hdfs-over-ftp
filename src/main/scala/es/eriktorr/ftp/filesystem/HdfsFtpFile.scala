@@ -4,6 +4,7 @@ import java.io._
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
+import es.eriktorr.ftp.filesystem.concurrent.TimeLimiter
 import es.eriktorr.ftp.filesystem.permissions.{
   FileAttributes,
   GroupPermission,
@@ -18,11 +19,13 @@ import org.apache.hadoop.hdfs.DistributedFileSystem
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
+import scala.concurrent.duration._
 
 case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: String, user: User)
     extends FtpFile
     with LazyLogging
-    with FileNameProcessing {
+    with FileNameProcessing
+    with TimeLimiter {
   override def getAbsolutePath: String = normalized(fileName)
 
   override def getName: String = simpleNameFrom(getAbsolutePath)
@@ -151,9 +154,10 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
     }
 
   override def listFiles(): util.List[_ <: FtpFile] = {
-    val fileNames = Try {
-      distributedFileSystem.listStatus(new Path(fileName))
-    } match {
+    val fileNames = runWithTimeout[Path, Array[FileStatus]](
+      path => distributedFileSystem.listStatus(path),
+      10.seconds // TODO : load from configuration properties
+    )(new Path(fileName)) match {
       case Success(listStatus) => listStatus.toList.map(_.getPath.toString)
       case Failure(exception) =>
         warn(message = "listFiles failed", exception = exception, response = Seq.empty)

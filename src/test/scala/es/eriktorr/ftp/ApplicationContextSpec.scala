@@ -8,6 +8,8 @@ import es.eriktorr.ftp.ftpserver.FtpServerConfig
 import es.eriktorr.ftp.unitspec.UnitSpec
 import es.eriktorr.ftp.unitspec.data.DataProvider
 
+import scala.concurrent.duration._
+
 class ApplicationContextSpec extends UnitSpec with DataProvider {
   "Application context" should "be loaded from default location" in {
     ApplicationContextLoader.defaultApplicationContext shouldBe anApplicationContext(
@@ -44,6 +46,11 @@ class ApplicationContextSpec extends UnitSpec with DataProvider {
       enableAnonymous = true,
       Seq(RootFtpUser, AnonymousFtpUser)
     ),
-    HdfsClientConfig(uri = "hdfs://localhost:9000", superUser = "root", superGroup = "supergroup")
+    HdfsClientConfig(
+      uri = "hdfs://localhost:9000",
+      superUser = "root",
+      superGroup = "supergroup",
+      10.seconds
+    )
   )
 }

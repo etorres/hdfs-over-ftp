@@ -22,7 +22,7 @@ class HdfsFileSystemView(
     HdfsFtpFile(distributedFileSystem, workingDirectory, user)
 
   override def changeWorkingDirectory(dir: String): Boolean = {
-    val candidateWorkingDirectory = concatenateIfRelative(user.getHomeDirectory, dir)
+    val candidateWorkingDirectory = concatenateIfRelative(workingDirectory, dir)
     val file = HdfsFtpFile(distributedFileSystem, candidateWorkingDirectory, user)
     if (file.isDirectory && file.isReadable) {
       workingDirectory = candidateWorkingDirectory

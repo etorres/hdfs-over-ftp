@@ -11,6 +11,8 @@ object FtpServerApplication extends App with OptionParser {
     case None => ApplicationContextLoader.defaultApplicationContext
   }
 
+  logger.info(s"${BuildInfo.name} version ${BuildInfo.version} built at ${BuildInfo.builtAtString}")
+
   val ftpServer = FtpServer(applicationContext)
 
   ftpServer.start()

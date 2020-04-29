@@ -1,3 +1,10 @@
 package es.eriktorr.ftp.filesystem
 
-sealed case class HdfsClientConfig(uri: String, superUser: String, superGroup: String)
+import scala.concurrent.duration.FiniteDuration
+
+sealed case class HdfsClientConfig(
+  uri: String,
+  superUser: String,
+  superGroup: String,
+  timeout: FiniteDuration
+)

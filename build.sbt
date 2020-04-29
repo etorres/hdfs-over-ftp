@@ -52,3 +52,11 @@ coverageFailOnMinimum := true
 coverageEnabled := true
 
 enablePlugins(JavaServerAppPackaging)
+
+lazy val root = (project in file("."))
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "es.eriktorr.ftp",
+    buildInfoOptions := Seq(BuildInfoOption.BuildTime)
+  )
