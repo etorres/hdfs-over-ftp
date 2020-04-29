@@ -3,15 +3,16 @@ package es.eriktorr.ftp
 import es.eriktorr.ftp.ftpserver.FtpServer
 
 object FtpServerApplication extends App with OptionParser {
-  val options = optionsFrom(args)
+  logger.info(
+    s"${BuildInfo.name}, version ${BuildInfo.version}, built at ${BuildInfo.builtAtString}"
+  )
 
+  val options = optionsFrom(args)
   val applicationContext = options.get(Symbol("config")) match {
     case Some(resourceBasename) =>
       ApplicationContextLoader.loadApplicationContextFrom(resourceBasename)
     case None => ApplicationContextLoader.defaultApplicationContext
   }
-
-  logger.info(s"${BuildInfo.name} version ${BuildInfo.version} built at ${BuildInfo.builtAtString}")
 
   val ftpServer = FtpServer(applicationContext)
 
