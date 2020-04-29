@@ -12,7 +12,7 @@ final class ConcurrentLoginAuthority(val maxLoginNumber: Int, val maxLoginPerIp:
   }
 
   override def hashCode(): Int =
-    HashCode.hashCode(Seq(maxLoginNumber, maxLoginPerIp))
+    IntHashCode.hashCode(Seq(maxLoginNumber, maxLoginPerIp))
 
   override def toString: String =
     s"${classOf[ConcurrentLoginAuthority].getSimpleName}(maxLoginNumber=${maxLoginNumber.toString},maxLoginPerIp=${maxLoginPerIp.toString})"

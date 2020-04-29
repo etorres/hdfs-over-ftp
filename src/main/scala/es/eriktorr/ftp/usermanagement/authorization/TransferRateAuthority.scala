@@ -12,7 +12,7 @@ final class TransferRateAuthority(val maxDownloadRate: Int, val maxUploadRate: I
   }
 
   override def hashCode(): Int =
-    HashCode.hashCode(Seq(maxDownloadRate, maxUploadRate))
+    IntHashCode.hashCode(Seq(maxDownloadRate, maxUploadRate))
 
   override def toString: String =
     s"${classOf[TransferRateAuthority].getSimpleName}(maxDownloadRate=${maxDownloadRate.toString},maxUploadRate=${maxUploadRate.toString})"

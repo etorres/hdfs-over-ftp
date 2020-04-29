@@ -2,7 +2,7 @@ package es.eriktorr.ftp.usermanagement.authorization
 
 import scala.annotation.tailrec
 
-object HashCode {
+object IntHashCode {
   def hashCode(items: Seq[Int]): Int = {
     val prime = 31
 
