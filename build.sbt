@@ -3,7 +3,7 @@ organization := "es.eriktorr"
 name := "hdfs-over-ftp"
 version := "1.0"
 
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.2"
 
 val HadoopVersion = "3.2.1"
 

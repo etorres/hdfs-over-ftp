@@ -19,7 +19,6 @@ import org.apache.hadoop.hdfs.DistributedFileSystem
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
-import scala.concurrent.duration._
 
 case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: String, user: User)
     extends FtpFile
@@ -154,10 +153,9 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
     }
 
   override def listFiles(): util.List[_ <: FtpFile] = {
-    val fileNames = runWithTimeout[Path, Array[FileStatus]](
-      path => distributedFileSystem.listStatus(path),
-      10.seconds // TODO : load from configuration properties
-    )(new Path(fileName)) match {
+    val fileNames = Try {
+      distributedFileSystem.listStatus(new Path(fileName))
+    } match {
       case Success(listStatus) => listStatus.toList.map(_.getPath.toString)
       case Failure(exception) =>
         warn(message = "listFiles failed", exception = exception, response = Seq.empty)

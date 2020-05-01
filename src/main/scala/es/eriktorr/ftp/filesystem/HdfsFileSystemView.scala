@@ -11,7 +11,7 @@ class HdfsFileSystemView(
   private[this] var workingDirectory: String
 ) extends FileSystemView
     with FileNameProcessing {
-  def this(distributedFileSystem: DistributedFileSystem, user: User) {
+  def this(distributedFileSystem: DistributedFileSystem, user: User) = {
     this(distributedFileSystem, user, user.getHomeDirectory)
   }
 
