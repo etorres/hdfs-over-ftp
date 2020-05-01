@@ -4,7 +4,6 @@ import java.io._
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
-import es.eriktorr.ftp.filesystem.concurrent.TimeLimiter
 import es.eriktorr.ftp.filesystem.permissions.{
   FileAttributes,
   GroupPermission,
@@ -23,8 +22,7 @@ import scala.util.{Failure, Success, Try}
 case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: String, user: User)
     extends FtpFile
     with LazyLogging
-    with FileNameProcessing
-    with TimeLimiter {
+    with FileNameProcessing {
   override def getAbsolutePath: String = normalized(fileName)
 
   override def getName: String = simpleNameFrom(getAbsolutePath)
