@@ -11,7 +11,8 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
     anonymousHdfsFileSystemView().getHomeDirectory shouldBe HdfsFtpFile(
       DistributedFileSystemFake,
       "/user/ftp/pub",
-      AnonymousFtpUser
+      AnonymousFtpUser,
+      CustomHdfsLimits
     )
   }
 
@@ -19,7 +20,8 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
     anonymousHdfsFileSystemView().getWorkingDirectory shouldBe HdfsFtpFile(
       DistributedFileSystemFake,
       "/user/ftp/pub",
-      AnonymousFtpUser
+      AnonymousFtpUser,
+      CustomHdfsLimits
     )
   }
 
@@ -34,7 +36,8 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
         HdfsFtpFile(
           DistributedFileSystemFake,
           absolutePath,
-          AnonymousFtpUser
+          AnonymousFtpUser,
+          CustomHdfsLimits
         )
       )
     )
@@ -51,7 +54,8 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
         HdfsFtpFile(
           DistributedFileSystemFake,
           s"/user/ftp/pub/$relativePath",
-          AnonymousFtpUser
+          AnonymousFtpUser,
+          CustomHdfsLimits
         )
       )
     )
@@ -61,7 +65,8 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
     anonymousHdfsFileSystemView().getFile("/user/root") shouldBe HdfsFtpFile(
       DistributedFileSystemFake,
       "/user/root",
-      AnonymousFtpUser
+      AnonymousFtpUser,
+      CustomHdfsLimits
     )
   }
 
@@ -69,8 +74,14 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
     anonymousHdfsFileSystemView().isRandomAccessible shouldBe true
   }
 
+  private[this] lazy val CustomHdfsLimits = HdfsLimits(maxListedFiles = 1000)
+
   private[this] def anonymousHdfsFileSystemView() =
-    new HdfsFileSystemView(DistributedFileSystemFake, AnonymousFtpUser)
+    new HdfsFileSystemView(
+      DistributedFileSystemFake,
+      AnonymousFtpUser,
+      CustomHdfsLimits
+    )
 
   object DistributedFileSystemFake extends DistributedFileSystem {
     override def getFileStatus(f: Path): FileStatus = new FileStatus(

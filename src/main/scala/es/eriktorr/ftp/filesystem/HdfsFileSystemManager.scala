@@ -13,10 +13,12 @@ import org.apache.hadoop.hdfs.protocol.HdfsConstants.SafeModeAction
 trait HdfsFileSystemManager extends FileSystemFactory
 
 object HdfsFileSystemManager extends LazyLogging {
-  private class InnerHdfsFileSystemManager(distributedFileSystem: DistributedFileSystem)
-      extends HdfsFileSystemManager {
+  private class InnerHdfsFileSystemManager(
+    distributedFileSystem: DistributedFileSystem,
+    hdfsLimits: HdfsLimits
+  ) extends HdfsFileSystemManager {
     override def createFileSystemView(user: User): FileSystemView =
-      new HdfsFileSystemView(distributedFileSystem, user)
+      new HdfsFileSystemView(distributedFileSystem, user, hdfsLimits)
   }
 
   /**
@@ -53,7 +55,7 @@ object HdfsFileSystemManager extends LazyLogging {
     val safeMode = dfs.setSafeMode(SafeModeAction.SAFEMODE_GET)
     require(!safeMode, "The NameNode is in safe mode state")
 
-    new InnerHdfsFileSystemManager(dfs)
+    new InnerHdfsFileSystemManager(dfs, hdfsClientConfig.hdfsLimits)
   }
 
   private[this] def configureEnvironment(hadoopUser: String): Unit = {

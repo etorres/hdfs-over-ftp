@@ -3,12 +3,10 @@ package es.eriktorr.ftp
 import java.util.concurrent.atomic.AtomicReference
 
 import better.files.File
-import es.eriktorr.ftp.filesystem.HdfsClientConfig
+import es.eriktorr.ftp.filesystem.{HdfsClientConfig, HdfsLimits}
 import es.eriktorr.ftp.ftpserver.FtpServerConfig
 import es.eriktorr.ftp.unitspec.UnitSpec
 import es.eriktorr.ftp.unitspec.data.DataProvider
-
-import scala.concurrent.duration._
 
 class ApplicationContextSpec extends UnitSpec with DataProvider {
   "Application context" should "be loaded from default location" in {
@@ -50,7 +48,7 @@ class ApplicationContextSpec extends UnitSpec with DataProvider {
       uri = "hdfs://localhost:9000",
       superUser = "root",
       superGroup = "supergroup",
-      10.seconds
+      hdfsLimits = HdfsLimits(maxListedFiles = 1000)
     )
   )
 }

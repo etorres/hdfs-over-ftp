@@ -19,8 +19,12 @@ import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
 
-case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: String, user: User)
-    extends FtpFile
+case class HdfsFtpFile(
+  distributedFileSystem: DistributedFileSystem,
+  fileName: String,
+  user: User,
+  hdfsLimits: HdfsLimits
+) extends FtpFile
     with LazyLogging
     with FileNameProcessing {
   override def getAbsolutePath: String = normalized(fileName)
@@ -158,7 +162,11 @@ case class HdfsFtpFile(distributedFileSystem: DistributedFileSystem, fileName: S
       case Failure(exception) =>
         warn(message = "listFiles failed", exception = exception, response = Seq.empty)
     }
-    fileNames.map(fn => HdfsFtpFile(distributedFileSystem, fn, user)).asJava
+    require(
+      fileNames.size <= hdfsLimits.maxListedFiles,
+      s"List files is supported for directories with at most ${hdfsLimits.maxListedFiles.toString} files"
+    )
+    fileNames.map(fn => HdfsFtpFile(distributedFileSystem, fn, user, hdfsLimits)).asJava
   }
 
   // Needed because the Java interface will fail with an exception or return null values
