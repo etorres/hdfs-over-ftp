@@ -2,6 +2,7 @@ package es.eriktorr.ftp.filesystem
 
 import es.eriktorr.ftp.unitspec.UnitSpec
 import es.eriktorr.ftp.unitspec.data.DataProvider
+import org.apache.ftpserver.ftplet.FtpException
 import org.apache.hadoop.fs.permission.FsPermission
 import org.apache.hadoop.fs.{FileStatus, Path}
 import org.apache.hadoop.hdfs.DistributedFileSystem
@@ -74,9 +75,19 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
     anonymousHdfsFileSystemView().isRandomAccessible shouldBe true
   }
 
+  it should "fail with exception when directories/files out of chroot jail are accessed" in {
+    the[FtpException] thrownBy chrootJailHdfsFileSystemView().changeWorkingDirectory(
+      "/user/root/input"
+    ) should have message "Access is restricted to home directory"
+  }
+
   private[this] lazy val CustomHdfsLimits = HdfsLimits(maxListedFiles = 1000)
 
-  private[this] def anonymousHdfsFileSystemView() =
+  private[this] def anonymousHdfsFileSystemView() = aHdfsFileSystemView(false)
+
+  private[this] def chrootJailHdfsFileSystemView() = aHdfsFileSystemView(true)
+
+  private[this] def aHdfsFileSystemView(makeHomeRoot: Boolean) =
     new HdfsFileSystemView(
       DistributedFileSystemFake,
       AnonymousFtpUser,
@@ -84,7 +95,7 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
         uri = "hdfs://localhost:9000",
         superUser = "hadoop",
         superGroup = "supergroup",
-        makeHomeRoot = false,
+        makeHomeRoot = makeHomeRoot,
         hdfsLimits = CustomHdfsLimits
       )
     )

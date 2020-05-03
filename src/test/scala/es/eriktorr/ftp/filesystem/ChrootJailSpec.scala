@@ -2,32 +2,28 @@ package es.eriktorr.ftp.filesystem
 
 import es.eriktorr.ftp.unitspec.UnitSpec
 import es.eriktorr.ftp.unitspec.data.DataProvider
-import org.apache.ftpserver.ftplet.FtpException
-import org.apache.hadoop.hdfs.DistributedFileSystem
 
 class ChrootJailSpec extends UnitSpec with DataProvider {
   "Chroot jail" should "deny access to files or directories under chroot directory" in {
-    val absolutePath = "/user/root/input"
-    val hdfsFileSystemView = chrootJailHdfsFileSystemView()
-    the[FtpException] thrownBy hdfsFileSystemView.changeWorkingDirectory(
-      absolutePath
-    ) should have message "Access is restricted to home directory"
+    ChrootJailFake.isAllowed(
+      rootDir = "/user/root/input",
+      path = "/user/root"
+    ) shouldBe false
   }
 
-  private[this] def chrootJailHdfsFileSystemView() =
-    new HdfsFileSystemView(
-      DistributedFileSystemFake,
-      AnonymousFtpUser,
-      HdfsClientConfig(
-        uri = "hdfs://localhost:9000",
-        superUser = "hadoop",
-        superGroup = "supergroup",
-        makeHomeRoot = true,
-        hdfsLimits = CustomHdfsLimits
-      )
-    )
+  it should "allow access to files or directories over chroot directory" in {
+    ChrootJailFake.isAllowed(
+      rootDir = "/user/root",
+      path = "/user/root/input"
+    ) shouldBe true
+  }
 
-  private[this] lazy val CustomHdfsLimits = HdfsLimits(maxListedFiles = 1000)
+  it should "allow access to root directory" in {
+    ChrootJailFake.isAllowed(
+      rootDir = "/user/root",
+      path = "/user/root"
+    ) shouldBe true
+  }
 
-  object DistributedFileSystemFake extends DistributedFileSystem
+  object ChrootJailFake extends ChrootJail
 }

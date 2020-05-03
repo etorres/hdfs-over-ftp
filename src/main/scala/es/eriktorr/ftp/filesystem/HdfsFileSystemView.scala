@@ -1,5 +1,6 @@
 package es.eriktorr.ftp.filesystem
 
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.ftpserver.ftplet.{FileSystemView, FtpException, FtpFile, User}
 import org.apache.hadoop.hdfs.DistributedFileSystem
 
@@ -11,7 +12,8 @@ class HdfsFileSystemView(
   @SuppressWarnings(Array("org.wartremover.warts.Var"))
   private[this] var workingDirectory: String
 ) extends FileSystemView
-    with FileNameProcessing {
+    with ChrootJail
+    with LazyLogging {
   def this(
     distributedFileSystem: DistributedFileSystem,
     user: User,
@@ -30,7 +32,19 @@ class HdfsFileSystemView(
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   override def changeWorkingDirectory(dir: String): Boolean = {
     val candidateWorkingDirectory = concatenateIfRelative(workingDirectory, dir)
-    if (hdfsClientConfig.makeHomeRoot && !directoryContains(
+
+    // TODO
+    logger.info(s"""
+                   |home_dir=${user.getHomeDirectory}\n
+                   |new_working_dir=$candidateWorkingDirectory\n 
+                   |is_contained=${isAllowed(
+                     user.getHomeDirectory,
+                     candidateWorkingDirectory
+                   ).toString}
+                   |""".stripMargin)
+    // TODO
+
+    if (hdfsClientConfig.makeHomeRoot && !isAllowed(
         user.getHomeDirectory,
         candidateWorkingDirectory
       )) throw new FtpException("Access is restricted to home directory")
