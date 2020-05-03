@@ -6,7 +6,8 @@ import org.apache.commons.io.FilenameUtils.{
   getName,
   getPrefix,
   normalizeNoEndSeparator,
-  separatorsToUnix
+  separatorsToUnix,
+  directoryContains => directoryContainsJava
 }
 
 trait FileNameProcessing {
@@ -23,4 +24,6 @@ trait FileNameProcessing {
       case _ => concatenate(basePath, fileNameToAdd)
     }
   }
+  def directoryContains(parent: String, child: String): Boolean =
+    directoryContainsJava(parent, child)
 }

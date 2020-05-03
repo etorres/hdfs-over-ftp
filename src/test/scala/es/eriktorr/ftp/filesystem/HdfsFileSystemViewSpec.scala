@@ -80,7 +80,13 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
     new HdfsFileSystemView(
       DistributedFileSystemFake,
       AnonymousFtpUser,
-      CustomHdfsLimits
+      HdfsClientConfig(
+        uri = "hdfs://localhost:9000",
+        superUser = "hadoop",
+        superGroup = "supergroup",
+        makeHomeRoot = false,
+        hdfsLimits = CustomHdfsLimits
+      )
     )
 
   object DistributedFileSystemFake extends DistributedFileSystem {

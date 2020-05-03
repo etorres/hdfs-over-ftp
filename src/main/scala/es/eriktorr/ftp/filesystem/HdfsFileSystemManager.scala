@@ -15,10 +15,10 @@ trait HdfsFileSystemManager extends FileSystemFactory
 object HdfsFileSystemManager extends LazyLogging {
   private class InnerHdfsFileSystemManager(
     distributedFileSystem: DistributedFileSystem,
-    hdfsLimits: HdfsLimits
+    hdfsClientConfig: HdfsClientConfig
   ) extends HdfsFileSystemManager {
     override def createFileSystemView(user: User): FileSystemView =
-      new HdfsFileSystemView(distributedFileSystem, user, hdfsLimits)
+      new HdfsFileSystemView(distributedFileSystem, user, hdfsClientConfig)
   }
 
   /**
@@ -55,7 +55,7 @@ object HdfsFileSystemManager extends LazyLogging {
     val safeMode = dfs.setSafeMode(SafeModeAction.SAFEMODE_GET)
     require(!safeMode, "The NameNode is in safe mode state")
 
-    new InnerHdfsFileSystemManager(dfs, hdfsClientConfig.hdfsLimits)
+    new InnerHdfsFileSystemManager(dfs, hdfsClientConfig)
   }
 
   private[this] def configureEnvironment(hadoopUser: String): Unit = {

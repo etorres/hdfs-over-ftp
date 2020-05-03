@@ -48,6 +48,7 @@ class ApplicationContextSpec extends UnitSpec with DataProvider {
       uri = "hdfs://localhost:9000",
       superUser = "root",
       superGroup = "supergroup",
+      makeHomeRoot = false,
       hdfsLimits = HdfsLimits(maxListedFiles = 1000)
     )
   )
