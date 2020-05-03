@@ -6,6 +6,6 @@ sealed case class HdfsClientConfig(
   uri: String,
   superUser: String,
   superGroup: String,
-  makeHomeRoot: Boolean,
+  enableChrootJail: Boolean,
   hdfsLimits: HdfsLimits
 )

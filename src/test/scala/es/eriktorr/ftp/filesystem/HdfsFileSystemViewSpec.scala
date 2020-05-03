@@ -100,7 +100,7 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
         uri = "hdfs://localhost:9000",
         superUser = "hadoop",
         superGroup = "supergroup",
-        makeHomeRoot = makeHomeRoot,
+        enableChrootJail = makeHomeRoot,
         hdfsLimits = CustomHdfsLimits
       )
     )

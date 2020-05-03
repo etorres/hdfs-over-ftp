@@ -4,6 +4,25 @@
 
 This is rewrite of the project [hdfs-over-ftp](https://github.com/iponweb/hdfs-over-ftp). I found in this project an opportunity to gain experience and developing my skills in Java-to-Scala migration. However, I reduced the scope excluding some advanced features like modifying user accounts (add, delete FTP users), also only non-SSL is supported.
 
+## Getting Started
+
+### Configuration
+
+Changing working directory to a directory below the home directory will result in an error `550`:
+
+```text
+ftp> cd ..
+550 No such directory.
+```
+
+Likewise, getting a file below the home directory will result in the following error:
+
+```text
+ftp> get /user/hadoop/libs/udf.jar
+local: /user/hadoop/libs/udf.jar remote: /user/hadoop/libs/udf.jar
+ftp: Can't access `/user/hadoop/libs/udf.jar': No such file or directory
+```
+
 ## Configuring your environment
 
 Pull the Hadoop docker image:

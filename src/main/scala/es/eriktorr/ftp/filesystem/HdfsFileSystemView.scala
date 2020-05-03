@@ -57,7 +57,7 @@ class HdfsFileSystemView(
 
   private[this] def requireChrootJailAccess(rootDir: String, path: String): Unit =
     require(
-      !hdfsClientConfig.makeHomeRoot || isAllowed(rootDir, path),
+      !hdfsClientConfig.enableChrootJail || isAllowed(rootDir, path),
       "Access is restricted to home directory"
     )
 }
