@@ -38,6 +38,8 @@ You can always remove this alias later with the following command:
 sudo ifconfig lo0 -alias 172.17.0.2
 ```
 
+You can access the Hadoop manager in your browser in the following URL: http://localhost:50070/
+
 You can find out all the ports mapped with the docker port command (you can find the container _id_ with `docker ps`):
 
 ```text

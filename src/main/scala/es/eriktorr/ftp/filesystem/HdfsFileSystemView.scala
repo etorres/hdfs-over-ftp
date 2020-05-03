@@ -1,6 +1,6 @@
 package es.eriktorr.ftp.filesystem
 
-import org.apache.ftpserver.ftplet.{FileSystemView, FtpException, FtpFile, User}
+import org.apache.ftpserver.ftplet.{FileSystemView, FtpFile, User}
 import org.apache.hadoop.hdfs.DistributedFileSystem
 
 class HdfsFileSystemView(
@@ -26,14 +26,9 @@ class HdfsFileSystemView(
   override def getWorkingDirectory: FtpFile =
     HdfsFtpFile(distributedFileSystem, workingDirectory, user, hdfsClientConfig.hdfsLimits)
 
-  // Needed to restrict access to home directory
-  @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   override def changeWorkingDirectory(dir: String): Boolean = {
     val candidateWorkingDirectory = concatenateIfRelative(workingDirectory, dir)
-    if (hdfsClientConfig.makeHomeRoot && !isAllowed(
-        user.getHomeDirectory,
-        candidateWorkingDirectory
-      )) throw new FtpException("Access is restricted to home directory")
+    requireChrootJailAccess(user.getHomeDirectory, candidateWorkingDirectory)
     val file = HdfsFtpFile(
       distributedFileSystem,
       candidateWorkingDirectory,
@@ -46,15 +41,23 @@ class HdfsFileSystemView(
     } else false
   }
 
-  override def getFile(file: String): FtpFile =
+  override def getFile(file: String): FtpFile = {
+    requireChrootJailAccess(user.getHomeDirectory, file)
     HdfsFtpFile(
       distributedFileSystem,
       concatenate(workingDirectory, file),
       user,
       hdfsClientConfig.hdfsLimits
     )
+  }
 
   override def isRandomAccessible: Boolean = true
 
   override def dispose(): Unit = {}
+
+  private[this] def requireChrootJailAccess(rootDir: String, path: String): Unit =
+    require(
+      !hdfsClientConfig.makeHomeRoot || isAllowed(rootDir, path),
+      "Access is restricted to home directory"
+    )
 }
