@@ -1,7 +1,7 @@
 maintainer := "etserrano@gmail.com"
 organization := "es.eriktorr"
 name := "hdfs-over-ftp"
-version := "1.0"
+version := "1.0.0"
 
 scalaVersion := "2.13.2"
 
