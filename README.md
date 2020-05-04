@@ -60,11 +60,11 @@ ftp> ^D
 221 Goodbye.
 ```
 
-### Configuring `hdfs-over-ftp`
+## Configuring `hdfs-over-ftp`
 
 A default configuration file will be included with the distribution. You can check the [application.conf](src/main/resources/application.conf) for additional information about configuration properties.
 
-#### Using chroot jail
+### Using chroot jail
 
 Changing working directory to a directory below the home directory will result in an error `550`:
 
@@ -79,6 +79,14 @@ Likewise, getting a file below the home directory will result in the following e
 ftp> get /user/hadoop/libs/udf.jar
 local: /user/hadoop/libs/udf.jar remote: /user/hadoop/libs/udf.jar
 ftp: Can't access `/user/hadoop/libs/udf.jar': No such file or directory
+```
+
+### Limiting the maximum number of files listed
+
+Listing a HDFS directory with many files may cause a long delay due to a heavy postprocessing of the information of the files. You can limit the maximum number of files that can be listed. Listing a directory with more files than the configured limit will fail with the following error:
+
+```text
+
 ```
 
 ## Contributing to the project
@@ -138,13 +146,13 @@ Useful commands:
 /usr/local/hadoop/bin/hdfs getconf -confKey fs.defaultFS
 ```
 
-### Build and test this project with specific Java version (using [jenv](https://www.jenv.be/))
+### Building and testing this project with specific Java version (using [jenv](https://www.jenv.be/))
 
 ```shell script
 jenv exec sbt clean test
 ```
 
-#### Run the tests with enabled coverage
+#### Running the tests with enabled coverage
 
 ```shell script
 jenv exec sbt clean coverage test
@@ -156,7 +164,7 @@ jenv exec sbt clean coverage test
 jenv exec sbt coverageReport
 ```
 
-### List dependencies of this project
+### Listing dependencies of this project
 
 ```shell script
 jenv exec sbt dependencyTree
@@ -166,7 +174,7 @@ jenv exec sbt dependencyTree
 jenv exec sbt dependencyBrowseGraph
 ```
 
-## Build distribution from source code
+## Building distribution from source code
 
 ```shell script
 jenv exec sbt universal:packageBin

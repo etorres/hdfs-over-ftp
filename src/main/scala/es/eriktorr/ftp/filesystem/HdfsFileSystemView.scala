@@ -42,10 +42,11 @@ class HdfsFileSystemView(
   }
 
   override def getFile(file: String): FtpFile = {
-    requireChrootJailAccess(user.getHomeDirectory, file)
+    val pathToFile = concatenate(workingDirectory, file)
+    requireChrootJailAccess(user.getHomeDirectory, pathToFile)
     HdfsFtpFile(
       distributedFileSystem,
-      concatenate(workingDirectory, file),
+      pathToFile,
       user,
       hdfsClientConfig.hdfsLimits
     )
