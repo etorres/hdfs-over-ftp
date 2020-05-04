@@ -86,13 +86,26 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
     ) should have message "requirement failed: Access is restricted to home directory"
   }
 
+  it should "change to a working directory inside the chroot jail" in {
+    chrootJailHdfsFileSystemView().changeWorkingDirectory("/user/ftp/pub/dir") shouldBe true
+  }
+
+  it should "get a file inside the chroot jail" in {
+    chrootJailHdfsFileSystemView().getFile("/user/ftp/pub/file.txt") shouldBe HdfsFtpFile(
+      DistributedFileSystemFake,
+      "/user/ftp/pub/file.txt",
+      AnonymousFtpUser,
+      CustomHdfsLimits
+    )
+  }
+
   private[this] lazy val CustomHdfsLimits = HdfsLimits(maxListedFiles = 1000)
 
   private[this] def anonymousHdfsFileSystemView() = aHdfsFileSystemView(false)
 
   private[this] def chrootJailHdfsFileSystemView() = aHdfsFileSystemView(true)
 
-  private[this] def aHdfsFileSystemView(makeHomeRoot: Boolean) =
+  private[this] def aHdfsFileSystemView(enableChrootJail: Boolean) =
     new HdfsFileSystemView(
       DistributedFileSystemFake,
       AnonymousFtpUser,
@@ -100,7 +113,7 @@ class HdfsFileSystemViewSpec extends UnitSpec with DataProvider {
         uri = "hdfs://localhost:9000",
         superUser = "hadoop",
         superGroup = "supergroup",
-        enableChrootJail = makeHomeRoot,
+        enableChrootJail = enableChrootJail,
         hdfsLimits = CustomHdfsLimits
       )
     )

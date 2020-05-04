@@ -5,10 +5,9 @@ import org.apache.commons.io.IOCase
 
 trait ChrootJail extends FileNameProcessing {
   def isAllowed(rootDir: String, path: String): Boolean = {
-    val canonicalRootDir = normalized(rootDir)
     val canonicalPath = normalized(path)
-    pathEquals(canonicalRootDir, canonicalPath, false, IOCase.SENSITIVE) || directoryContains(
-      canonicalRootDir,
+    pathEquals(normalized(rootDir), canonicalPath, false, IOCase.SENSITIVE) || directoryContains(
+      normalizedWithEndSeparator(rootDir),
       canonicalPath
     )
   }

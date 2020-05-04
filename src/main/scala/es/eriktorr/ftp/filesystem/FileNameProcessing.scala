@@ -5,6 +5,7 @@ import org.apache.commons.io.FilenameUtils._
 trait FileNameProcessing {
   def normalized(fileName: String): String =
     normalizeNoEndSeparator(separatorsToUnix(fileName)).replaceFirst("//", "/")
+  def normalizedWithEndSeparator(fileName: String): String = s"${normalized(fileName)}/"
   def simpleNameFrom(fileName: String): String = getName(fileName)
   def concatenate(basePath: String, fileNameToAdd: String): String =
     normalized(concat(basePath, separatorsToUnix(fileNameToAdd)))

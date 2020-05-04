@@ -7,7 +7,7 @@ class ChrootJailSpec extends UnitSpec with DataProvider {
   "Chroot jail" should "deny access to files or directories under chroot directory" in {
     ChrootJailFake.isAllowed(
       rootDir = "/user/root/input",
-      path = "/user/root"
+      path = "/user/root/input1/file.txt"
     ) shouldBe false
   }
 
