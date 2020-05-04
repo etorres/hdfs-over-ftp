@@ -86,7 +86,10 @@ ftp: Can't access `/user/hadoop/libs/udf.jar': No such file or directory
 Listing a HDFS directory with many files may cause a long delay due to a heavy postprocessing of the information of the files. You can limit the maximum number of files that can be listed. Listing a directory with more files than the configured limit will fail with the following error:
 
 ```text
-
+ftp> ls
+229 Entering Passive Mode (|||2223|)
+150 File status okay; about to open data connection.
+550 Requested action not taken.
 ```
 
 ## Contributing to the project
