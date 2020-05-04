@@ -53,6 +53,7 @@ coverageEnabled := true
 coverageExcludedPackages := "es\\.eriktorr\\.ftp\\.BuildInfo"
 
 enablePlugins(JavaServerAppPackaging)
+mappings in Universal in packageBin += file("doc/README_DIST.TXT") -> "README.TXT"
 
 lazy val root = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
