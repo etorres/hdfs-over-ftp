@@ -187,6 +187,7 @@ jenv exec sbt universal:packageBin
 
 * [Setup a Single-Node Hadoop Cluster Using Docker](https://www.alibabacloud.com/blog/setup-a-single-node-hadoop-cluster-using-docker_595278).
 * [Hadoop: Setting up a Single Node Cluster](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html).
+* [Debugging CI/CD pipelines with SSH access](https://circleci.com/blog/debugging-ci-cd-pipelines-with-ssh-access/).
 
 ### Configure Java 11 in your work directory
 
