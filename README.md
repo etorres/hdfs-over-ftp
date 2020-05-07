@@ -1,6 +1,6 @@
 # HDFS over FTP
 
-[![Build Status](https://circleci.com/gh/etorres/hdfs-over-ftp.svg?style=svg)](https://circleci.com/gh/etorres/hdfs-over-ftp) [![Coverage Status](https://coveralls.io/repos/github/etorres/hdfs-over-ftp/badge.svg?branch=master)](https://coveralls.io/github/etorres/hdfs-over-ftp?branch=master)
+[![Build Status](https://circleci.com/gh/etorres/hdfs-over-ftp.svg?style=svg)](https://circleci.com/gh/etorres/hdfs-over-ftp)
 
 This is rewrite of the project [hdfs-over-ftp](https://github.com/iponweb/hdfs-over-ftp). I found in this project an opportunity to gain experience and developing my skills in Java-to-Scala migration. However, I reduced the scope excluding some advanced features like modifying user accounts (add, delete FTP users), also only non-SSL is supported.
 
@@ -151,14 +151,10 @@ Useful commands:
 
 ### Building and testing this project with specific Java version (using [jenv](https://www.jenv.be/))
 
+This command will run the tests with enabled coverage as configured in [build.sbt](build.sbt):
+
 ```shell script
 jenv exec sbt clean test
-```
-
-#### Running the tests with enabled coverage
-
-```shell script
-jenv exec sbt clean coverage test
 ```
 
 #### To generate the coverage reports run
