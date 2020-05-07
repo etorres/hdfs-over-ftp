@@ -1,0 +1,48 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:11-jdk
+
+      - image: sequenceiq/hadoop-docker:2.6.0
+        name: hadoop
+        command: ["/etc/bootstrap.sh", "-d"]
+
+    working_directory: ~/repo
+
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.sbt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: "Build source"
+          command: cat /dev/null | sbt test:compile
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies--{{ checksum "build.sbt" }}
+
+      - run:
+          name: "Wait for dependencies before staring tests"
+          command: timeout 120 bash -c 'until printf "" 2>>/dev/null >>/dev/tcp/$0/$1; do sleep 1; done' hadoop 8040
+
+      - run:
+          name: "Run test with coverage"
+          command: cat /dev/null | sbt coverage test:test
+          environment:
+            HDFS_CLIENT_URI: "hdfs://hadoop:9000"
+
+      - run:
+          name: "Upload code coverage to coveralls"
+          command: sbt coverageReport coveralls

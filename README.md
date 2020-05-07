@@ -1,6 +1,6 @@
 # HDFS over FTP
 
-[![Build Status](https://travis-ci.org/etorres/hdfs-over-ftp.svg?branch=master)](https://travis-ci.org/etorres/hdfs-over-ftp) [![Coverage Status](https://coveralls.io/repos/github/etorres/hdfs-over-ftp/badge.svg?branch=master)](https://coveralls.io/github/etorres/hdfs-over-ftp?branch=master)
+[![Build Status](https://circleci.com/gh/etorres/hdfs-over-ftp.svg?style=svg)](https://circleci.com/gh/etorres/hdfs-over-ftp) [![Coverage Status](https://coveralls.io/repos/github/etorres/hdfs-over-ftp/badge.svg?branch=master)](https://coveralls.io/github/etorres/hdfs-over-ftp?branch=master)
 
 This is rewrite of the project [hdfs-over-ftp](https://github.com/iponweb/hdfs-over-ftp). I found in this project an opportunity to gain experience and developing my skills in Java-to-Scala migration. However, I reduced the scope excluding some advanced features like modifying user accounts (add, delete FTP users), also only non-SSL is supported.
 
@@ -187,6 +187,7 @@ jenv exec sbt universal:packageBin
 
 * [Setup a Single-Node Hadoop Cluster Using Docker](https://www.alibabacloud.com/blog/setup-a-single-node-hadoop-cluster-using-docker_595278).
 * [Hadoop: Setting up a Single Node Cluster](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html).
+* [Debugging CI/CD pipelines with SSH access](https://circleci.com/blog/debugging-ci-cd-pipelines-with-ssh-access/).
 
 ### Configure Java 11 in your work directory
 
