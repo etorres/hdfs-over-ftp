@@ -1,7 +1,3 @@
-# Scala CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/sample-config/ for more details
-#
 version: 2
 jobs:
   build:
@@ -27,7 +23,9 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: cat /dev/null | sbt test:compile
+      - run:
+          name: "Build source"
+          command: cat /dev/null | sbt test:compile
 
       - save_cache:
           paths:
@@ -35,6 +33,7 @@ jobs:
           key: v1-dependencies--{{ checksum "build.sbt" }}
 
       - run:
+          name: "Test"
           command: cat /dev/null | sbt test:test
           environment:
             HDFS_CLIENT_URI: "hdfs://hadoop:9000"
