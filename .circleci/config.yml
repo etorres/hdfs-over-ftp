@@ -39,7 +39,7 @@ jobs:
 
       - run:
           name: "Run test with coverage"
-          command: cat /dev/null | sbt coverage test:test
+          command: cat /dev/null | sbt coverage test
           environment:
             HDFS_CLIENT_URI: "hdfs://hadoop:9000"
 
